@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:shabdamitra/app/pages/onboarding/SelectType.dart';
+import 'package:shabdamitra/onboarding/select_user_type.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class SelectEnthusiastic extends StatefulWidget {
-  const SelectEnthusiastic({Key? key}) : super(key: key);
+class SelectProficiancy extends StatefulWidget {
+  const SelectProficiancy({Key? key}) : super(key: key);
 
   @override
-  _SelectEnthusiasticState createState() => _SelectEnthusiasticState();
+  _SelectProficiancyState createState() => _SelectProficiancyState();
 }
 
-class _SelectEnthusiasticState extends State<SelectEnthusiastic> {
+class _SelectProficiancyState extends State<SelectProficiancy> {
   int selectedIndex = 0;
 
   Widget customRadio(String text, int index) {
@@ -42,6 +43,36 @@ class _SelectEnthusiasticState extends State<SelectEnthusiastic> {
         ),
       ),
     );
+  }
+
+  onFinish() async {
+    if(selectedIndex == 0){
+      showDialog(context: context
+      , builder: (_) =>  AlertDialog(
+            title: const Text('Proficiancy level is missing!!!'),
+            content: const Text('Proficiency is required because you will be shown words based open it.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Okay '),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+        ),
+      );
+    }
+    else{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt('userType', selectedIndex);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SelectUserType(),
+        ),
+      );
+    }
+    
   }
 
   @override
@@ -114,16 +145,7 @@ class _SelectEnthusiasticState extends State<SelectEnthusiastic> {
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation1, animation2) =>
-                              const SelectType(),
-                          transitionDuration: Duration.zero,
-                        ),
-                      );
-                    },
+                    onPressed: onFinish,
                     child: const Text(
                       ' F I N I S H !',
                       style: TextStyle(

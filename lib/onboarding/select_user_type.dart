@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:shabdamitra/app/pages/onboarding/select_enthusiastic.dart';
+import 'package:shabdamitra/onboarding/select_proficiancy.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class SelectType extends StatefulWidget {
-  const SelectType({Key? key}) : super(key: key);
+class SelectUserType extends StatefulWidget {
+  const SelectUserType({Key? key}) : super(key: key);
 
   @override
-  _SelectTypeState createState() => _SelectTypeState();
+  _SelectUserTypeState createState() => _SelectUserTypeState();
 }
 
-class _SelectTypeState extends State<SelectType> {
+class _SelectUserTypeState extends State<SelectUserType> {
   int selectedIndex = 0;
   List<String> images = [
     " ",
@@ -59,6 +60,38 @@ class _SelectTypeState extends State<SelectType> {
         ),
       ),
     );
+  }
+
+
+
+  onNext() async {
+    if(selectedIndex == 0){
+      showDialog(context: context
+      , builder: (_) =>  AlertDialog(
+            title: const Text('User type is missing!!!'),
+            content: const Text('User type is required to determine your interests.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Okay '),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+        ),
+      );
+    }
+    else{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt('userType', selectedIndex);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SelectProficiancy(),
+        ),
+      );
+    }
+    
   }
 
   @override
@@ -117,19 +150,7 @@ class _SelectTypeState extends State<SelectType> {
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation1, animation2) =>
-                              const SelectEnthusiastic(),
-                          transitionDuration: Duration.zero,
-                        ),
-                      );
-                      //   MaterialPageRoute(
-                      //       builder: (context) => const SelectEnthusiastic()),
-                      // );
-                    },
+                    onPressed: onNext,
                     child: const Text(
                       ' N E X T ->',
                       style: TextStyle(

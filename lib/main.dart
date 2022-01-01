@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shabdamitra/app/pages/onboarding/SelectType.dart';
+import 'package:shabdamitra/onboarding/select_user_type.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Inter',
       ),
-      home: const SelectType(),
+      home: const SelectUserType(),
     );
   }
 }
