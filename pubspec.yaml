@@ -54,8 +54,7 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   assets:
-    - assets/images/student.png
-    - assets/images/enthusiastic.png
+    - assets/images/
   fonts:
     - family: Inter
       fonts:
