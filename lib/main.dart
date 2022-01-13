@@ -4,11 +4,12 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shabdamitra/ErrorHandlers/not_found.dart';
 import 'package:shabdamitra/homepage.dart';
-import 'package:shabdamitra/onboarding/select_user_type.dart';
+import 'package:shabdamitra/onboarding/introduction.dart';
 
 void main() async {
   await GetStorage.init();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
   runApp(MyApp());
 }
 
@@ -19,14 +20,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Following line of code is for dev only.
+    // Makes sure that onboarding is show on every run.
+    _storage.remove('onboardingDone');
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Shabdamitra',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        backgroundColor: const Color.fromRGBO(254, 254, 255, 255),
         fontFamily: 'Inter',
       ),
-      home: _storage.read('userType') == null ? const SelectUserType() : const HomePage(),
+      home: _storage.read('onboardingDone') == null
+          ? const Introduction()
+          : const HomePage(),
       onUnknownRoute: (settings) {
         return MaterialPageRoute(builder: (_) => const PageNotFoundRoute());
       },

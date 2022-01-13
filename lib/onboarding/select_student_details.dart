@@ -12,7 +12,7 @@ class SelectStudentDetails extends StatefulWidget {
 }
 
 class _SelectStudentDetailsState extends State<SelectStudentDetails> {
-  int _userClass = 0, _userBoard = 0  ;
+  int _userClass = 0, _userBoard = 0;
   final GetStorage _storage = GetStorage();
 
   final List<S2Choice<int>> _userBoardList = [
@@ -73,6 +73,7 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
     _storage.write('userProficiency', 0);
     _storage.write('userBoard', _userBoard);
     _storage.write('userClass', _userClass);
+    _storage.write('onboardingDone', true);
     Get.offAll(const HomePage());
   }
 
