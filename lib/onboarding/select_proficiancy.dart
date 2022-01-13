@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shabdamitra/onboarding/select_user_type.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:shabdamitra/homepage.dart';
 
 class SelectProficiancy extends StatefulWidget {
   const SelectProficiancy({Key? key}) : super(key: key);
@@ -10,15 +11,16 @@ class SelectProficiancy extends StatefulWidget {
 }
 
 class _SelectProficiancyState extends State<SelectProficiancy> {
-  int selectedIndex = 0;
+  int _selectedIndex = 0;
+  final GetStorage _storage = GetStorage();
 
   Widget customRadio(String text, int index) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.70,
-      height: 70,
+      height: MediaQuery.of(context).size.height * 0.099,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
-        border: (selectedIndex == index)
+        border: (_selectedIndex == index)
             ? (Border.all(
                 color: Colors.black,
                 width: 3.0,
@@ -29,14 +31,14 @@ class _SelectProficiancyState extends State<SelectProficiancy> {
       child: OutlinedButton(
         onPressed: () {
           setState(() {
-            selectedIndex = index;
+            _selectedIndex = index;
           });
         },
         child: Text(
           text,
           style: TextStyle(
-            color: (selectedIndex == index) ? (Colors.blue) : (Colors.grey),
-            fontWeight: (selectedIndex == index)
+            color: (_selectedIndex == index) ? (Colors.blue) : (Colors.grey),
+            fontWeight: (_selectedIndex == index)
                 ? (FontWeight.bold)
                 : (FontWeight.normal),
           ),
@@ -45,8 +47,8 @@ class _SelectProficiancyState extends State<SelectProficiancy> {
     );
   }
 
-  onFinish() async {
-    if(selectedIndex == 0){
+  void _onFinish() async {
+    if(_selectedIndex == 0){
       showDialog(context: context
       , builder: (_) =>  AlertDialog(
             title: const Text('Proficiancy level is missing!!!'),
@@ -63,16 +65,11 @@ class _SelectProficiancyState extends State<SelectProficiancy> {
       );
     }
     else{
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setInt('userType', selectedIndex);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SelectUserType(),
-        ),
-      );
+      _storage.write('userProficiency', _selectedIndex - 1);
+      _storage.write('userBoard', 0);
+      _storage.write('userClass', 0);
+      Get.offAll(const HomePage());
     }
-    
   }
 
   @override
@@ -89,7 +86,7 @@ class _SelectProficiancyState extends State<SelectProficiancy> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Padding(
-                      padding: EdgeInsets.all(20.0),
+                      padding: EdgeInsets.all(35.0),
                       child: Text(
                         "Tell us about you",
                         style: TextStyle(
@@ -102,7 +99,7 @@ class _SelectProficiancyState extends State<SelectProficiancy> {
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.70,
+                height: MediaQuery.of(context).size.height * 0.50,
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -145,7 +142,7 @@ class _SelectProficiancyState extends State<SelectProficiancy> {
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: ElevatedButton(
-                    onPressed: onFinish,
+                    onPressed: _onFinish,
                     child: const Text(
                       ' F I N I S H !',
                       style: TextStyle(

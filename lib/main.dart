@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:shabdamitra/homepage.dart';
 import 'package:shabdamitra/onboarding/select_user_type.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  await GetStorage.init();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+
+  final GetStorage _storage = GetStorage();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Shabdamitra',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily: 'Inter',
       ),
-      home: const SelectUserType(),
+      home: _storage.read('userType') == null ? const SelectUserType() : const HomePage(),
     );
   }
 }
