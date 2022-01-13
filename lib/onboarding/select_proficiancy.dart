@@ -131,7 +131,7 @@ class _SelectProficiancyState extends State<SelectProficiancy> {
                       ),
                     ),
                     customRadio("Beginner", 1),
-                    customRadio("Proficient", 2),
+                    customRadio("Intermediate", 2),
                     customRadio("Expert", 3),
                   ],
                 ),

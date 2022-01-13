@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shabdamitra/ErrorHandlers/not_found.dart';
 import 'package:shabdamitra/homepage.dart';
 import 'package:shabdamitra/onboarding/select_user_type.dart';
 
 void main() async {
   await GetStorage.init();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
   runApp(MyApp());
 }
 
@@ -24,6 +27,9 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Inter',
       ),
       home: _storage.read('userType') == null ? const SelectUserType() : const HomePage(),
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(builder: (_) => const PageNotFoundRoute());
+      },
     );
   }
 }
