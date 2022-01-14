@@ -8,7 +8,7 @@ class ErrorRoute extends StatelessWidget {
     const _biggerFont = TextStyle(fontSize: 20);
     const _fontStyle = TextStyle(fontSize: 14);
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(automaticallyImplyLeading: false,),
         backgroundColor: Colors.white,
         body:
         Column(
