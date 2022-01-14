@@ -22,35 +22,36 @@ class Introduction extends StatelessWidget {
         minimum: EdgeInsets.all(_inset),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Center(
-                child: SizedBox(
-                  height: 0.1 * _height,
-                  width: _width,
-                  child: Text(
-                    "Shabdamitra",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 0.07 * _height,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.red.shade700,
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children:  const [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(35.0, 35.0, 35.0, 20.0),
+                      child: Text(
+                        "Shabdamitra",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 50,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              Center(
-                child: SizedBox(
-                  height: 0.1 * _height,
-                  width: _width,
-                  child: Text(
-                    "A digital learning aid for teaching and learning Hindi",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 0.025 * _height,
-                      color: Colors.blue.shade400,
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 30.0),
+                      child: Text(
+                        "A digital learning aid for teaching and learning Hindi",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black45,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
               Center(
@@ -60,18 +61,17 @@ class Introduction extends StatelessWidget {
                   child: Image.asset("assets/images/teaching.png"),
                 ),
               ),
-              Center(
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 130,
                 child: Padding(
-                  padding: EdgeInsets.only(
-                    bottom: 0.1 * _height,
-                    top: 0.18 * _height,
-                  ),
+                  padding: const EdgeInsets.all(30.0),
                   child: ElevatedButton(
                     onPressed: _onNext,
-                    child: Text(
-                      ' N E X T ->',
+                    child: const Text(
+                      ' Get Started ! ->',
                       style: TextStyle(
-                        fontSize: 0.03 * _height,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

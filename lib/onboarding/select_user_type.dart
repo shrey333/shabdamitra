@@ -14,6 +14,8 @@ class SelectUserType extends StatefulWidget {
 class _SelectUserTypeState extends State<SelectUserType> {
   int _selectedIndex = 0;
   final GetStorage _storage = GetStorage();
+  
+
   List<String> images = [
     " ",
     "assets/images/student.png",
@@ -95,8 +97,14 @@ class _SelectUserTypeState extends State<SelectUserType> {
 
   @override
   Widget build(BuildContext context) {
+    double _width = MediaQuery.of(context).size.width;
+    double _height = MediaQuery.of(context).size.height;
+    double _inset = 0.01 * _height;
+    _width = _width - 2 * _inset;
+    _height = _height - 2 * _inset;
     return Scaffold(
       body: SafeArea(
+        minimum: EdgeInsets.all(_inset),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

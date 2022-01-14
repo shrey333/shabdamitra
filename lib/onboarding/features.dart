@@ -22,13 +22,16 @@ class Features extends StatelessWidget {
         minimum: EdgeInsets.all(_inset),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Center(
-                child: SizedBox(
-                  height: 0.3 * _height,
-                  width: _width,
-                  child: Image.asset("assets/images/learn.png"),
+              Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Center(
+                  child: SizedBox(
+                    height: 0.3 * _height,
+                    width: _width,
+                    child: Image.asset("assets/images/learn.png"),
+                  ),
                 ),
               ),
               Center(
@@ -57,7 +60,8 @@ class Features extends StatelessWidget {
                   ),
                 ),
               ),
-              Center(
+              Padding(
+                padding: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
                 child: SizedBox(
                   height: 0.2 * _height,
                   width: _width,
@@ -66,23 +70,22 @@ class Features extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 0.025 * _height,
-                      color: Colors.blue.shade400,
+                      color: Colors.black45,
                     ),
                   ),
                 ),
               ),
-              Center(
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 130,
                 child: Padding(
-                  padding: EdgeInsets.only(
-                    bottom: 0.1 * _height,
-                    top: 0.13 * _height,
-                  ),
+                  padding: const EdgeInsets.all(30.0),
                   child: ElevatedButton(
                     onPressed: _onNext,
-                    child: Text(
+                    child: const Text(
                       ' N E X T ->',
                       style: TextStyle(
-                        fontSize: 0.03 * _height,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

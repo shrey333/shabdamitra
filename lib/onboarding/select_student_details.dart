@@ -81,9 +81,11 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
     double _height = MediaQuery.of(context).size.height;
+    double _inset = 0.01 * _height;
 
     return Scaffold(
       body: SafeArea(
+        minimum: EdgeInsets.all(_inset),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -125,26 +127,45 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 50,
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                      height: MediaQuery.of(context).size.height * 0.099,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(
+                                color: Colors.black12,
+                                width: 1.0,
+                              ),
+                      ),
+                      child: Center(
+                        child: SmartSelect<int>.single(
+                          title: 'User Board',
+                          selectedValue: _userBoard,
+                          choiceItems: _userBoardList,
+                          onChange: (state) => _saveToLocal(1, state.value!),
+                          modalType: S2ModalType.bottomSheet,
+                        ),
+                      ),
                     ),
-                    SmartSelect<int>.single(
-                      title: 'User Board',
-                      selectedValue: _userBoard,
-                      choiceItems: _userBoardList,
-                      onChange: (state) => _saveToLocal(1, state.value!),
-                      modalType: S2ModalType.bottomSheet,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Divider(),
-                    ),
-                    SmartSelect<int>.single(
-                      title: "User class",
-                      selectedValue: _userClass,
-                      choiceItems: _userClassList[_userBoard],
-                      modalType: S2ModalType.bottomSheet,
-                      onChange: (state) => _saveToLocal(2, state.value!),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                      height: MediaQuery.of(context).size.height * 0.099,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(
+                                color: Colors.black12,
+                                width: 1.0,
+                              ),
+                      ),
+                      child: Center(
+                        child: SmartSelect<int>.single(
+                          title: "User class",
+                          selectedValue: _userClass,
+                          choiceItems: _userClassList[_userBoard],
+                          modalType: S2ModalType.bottomSheet,
+                          onChange: (state) => _saveToLocal(2, state.value!),
+                        ),
+                      ),
                     ),
                   ],
                 ),
