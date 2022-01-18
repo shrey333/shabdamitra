@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:shabdamitra/onboarding/select_proficiancy.dart';
+import 'package:shabdamitra/onboarding/select_proficiency.dart';
 import 'package:shabdamitra/onboarding/select_student_details.dart';
 
 class SelectUserType extends StatefulWidget {
@@ -90,7 +90,7 @@ class _SelectUserTypeState extends State<SelectUserType> {
       if (_selectedIndex == 1) {
         Get.to(const SelectStudentDetails());
       }else if(_selectedIndex == 2){
-        Get.to(const SelectProficiancy());
+        Get.to(const SelectProficiency());
       }
     }
   }

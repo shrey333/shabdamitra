@@ -3,14 +3,14 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shabdamitra/homepage.dart';
 
-class SelectProficiancy extends StatefulWidget {
-  const SelectProficiancy({Key? key}) : super(key: key);
+class SelectProficiency extends StatefulWidget {
+  const SelectProficiency({Key? key}) : super(key: key);
 
   @override
-  _SelectProficiancyState createState() => _SelectProficiancyState();
+  _SelectProficiencyState createState() => _SelectProficiencyState();
 }
 
-class _SelectProficiancyState extends State<SelectProficiancy> {
+class _SelectProficiencyState extends State<SelectProficiency> {
   int _selectedIndex = 0;
   final GetStorage _storage = GetStorage();
 
@@ -51,7 +51,7 @@ class _SelectProficiancyState extends State<SelectProficiancy> {
     if(_selectedIndex == 0){
       showDialog(context: context
       , builder: (_) =>  AlertDialog(
-            title: const Text('Proficiancy level is missing!!!'),
+            title: const Text('Proficiency level is missing!!!'),
             content: const Text('Proficiency is required because you will be shown words based open it.'),
             actions: <Widget>[
               TextButton(
