@@ -36,6 +36,9 @@ dependencies:
   get: ^4.6.1
   get_storage: ^2.0.3
   awesome_select: ^5.1.0
+  flappy_search_bar_ns: ^2.0.2
+  flutter_tts: ^3.3.3
+  settings_ui: ^2.0.2
 
 dev_dependencies:
   flutter_test:

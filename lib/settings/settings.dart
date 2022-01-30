@@ -1,7 +1,10 @@
-
 import 'package:awesome_select/awesome_select.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:settings_ui/settings_ui.dart';
+import 'package:shabdamitra/choices.dart' as choice;
+import 'package:shabdamitra/settings/student_settings.dart';
+import 'package:shabdamitra/settings/learner_settings.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -11,49 +14,9 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  int _userType = 0, _userBoard = 0, _userClass = 0, _userProficiency = 0;
+  int _userType = 0, _userBoard = 0, _userClass = 0, _userProficiency = 0, _language = 0;
   final GetStorage _storage = GetStorage();
-
-  final List<S2Choice<int>> _userTypeList = [
-    S2Choice(value: 0, title: 'Student'),
-    S2Choice(value: 1, title: 'Enthusiastic'),
-  ];
-  final List<S2Choice<int>> _userBoardList = [
-    S2Choice(value: 0, title: 'CBSE'),
-    S2Choice(value: 1, title: 'SWDHAYAY'),
-    S2Choice(value: 2, title: 'ICSE'),
-    S2Choice(value: 3, title: 'MSBSHSE'),
-  ];
-  final List<List<S2Choice<int>>> _userClassList = [
-    [
-      S2Choice(value: 0, title: 'Class 1'),
-      S2Choice(value: 1, title: 'Class 2'),
-      S2Choice(value: 2, title: 'Class 3'),
-      S2Choice(value: 3, title: 'Class 4'),
-      S2Choice(value: 4, title: 'Class 5'),
-      S2Choice(value: 5, title: 'Class 6'),
-      S2Choice(value: 6, title: 'Class 7'),
-      S2Choice(value: 7, title: 'Class 8'),
-      S2Choice(value: 8, title: 'Class 9'),
-      S2Choice(value: 9, title: 'Class 10'),
-      S2Choice(value: 10, title: 'Class 11'),
-    ],
-    [
-      S2Choice(value: 0, title: 'Class 1'),
-    ],
-    [
-      S2Choice(value: 0, title: 'Class 1'),
-      S2Choice(value: 1, title: 'Class 2'),
-    ],
-    [
-      S2Choice(value: 4, title: 'Class 5'),
-    ]
-  ];
-  final List<S2Choice<int>> _userProficiencyList = [
-    S2Choice(value: 0, title: 'Beginner'),
-    S2Choice(value: 1, title: 'Intermediate'),
-    S2Choice(value: 2, title: 'Expert'),
-  ];
+  String _theme = 'Blue';
 
   @override
   void initState() {
@@ -62,6 +25,7 @@ class _SettingsState extends State<Settings> {
     _userBoard = _storage.read("userBoard") ?? 0;
     _userClass = _storage.read("userClass") ?? 0;
     _userProficiency = _storage.read("userProficiency") ?? 0;
+    _language = _storage.read('language') ?? 0;
   }
 
   void _saveToLocal(int _userDataType, int _userData) async {
@@ -97,47 +61,162 @@ class _SettingsState extends State<Settings> {
           _storage.write('userProficiency', _userProficiency);
         });
         break;
+      case 4:
+        setState(() {
+          _language = _userData;
+          _storage.write('language', _language);
+        });
     }
+    setState(() {});
+  }
+
+  _onTap() {
+    showDialog(
+        context: context,
+        builder: (_) =>
+          AlertDialog(
+            title: const Text("Are you Sure?"),
+            content: const Text("You will lose all data pertaining to the selected type."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel')
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _userType == 0 ? _saveToLocal(0, 1) : _saveToLocal(0, 0);
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Okay ',)
+              )
+            ],
+          )
+    );
+    setState(() {});
+  }
+
+  _createRouteStudent() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => const StudentSettings(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+  _createRouteLearner() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => const LearnerSettings(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+  _getUserTypeSettings() {
+    return SettingsSection(
+      title: const Text('User Settings'),
+      tiles: [
+        CustomSettingsTile(
+          child: ListTile(
+            leading: const Icon(Icons.menu),
+            trailing: const Icon(Icons.keyboard_arrow_right),
+            title: Text(_userType == 0 ? 'Student Settings' : 'Learner Settings'),
+            subtitle: const Text('Customize your preferences'),
+            onTap: () {
+              _userType == 0
+                  ? Navigator.of(context).push(_createRouteStudent())
+                  : Navigator.of(context).push(_createRouteLearner());
+            }
+          )
+        ),
+        CustomSettingsTile(
+          child: ListTile(
+            leading: const Icon(Icons.swap_horiz),
+            title: Text(_userType == 0 ? 'You are Currently a Student' : 'You are Currently a Learner'),
+            subtitle: Text(_userType == 0 ? 'Tap to Switch to Learner' : 'Tap to Switch to Student'),
+            onTap: _onTap,
+          ),
+        ),
+
+      ]
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SmartSelect<int>.single(
-                title: "User type",
-                selectedValue: _userType,
-                choiceItems: _userTypeList,
-                modalType: S2ModalType.bottomSheet,
-                onChange: (state) => _saveToLocal(0, state.value!),
+      child: SettingsList(
+        sections: [
+          SettingsSection(
+            title: const Text('General'),
+            tiles: [
+              CustomSettingsTile(
+                child: SmartSelect<int>.single(
+                  title: 'Language',
+                  selectedValue: _language,
+                  choiceItems: choice.languageList,
+                  modalType: S2ModalType.bottomSheet,
+                  onChange: (state) => _saveToLocal(4, state.value!),
+                  tileBuilder: (context, state) {
+                    return S2Tile.fromState(state, isTwoLine: true, leading: const Icon(Icons.language_sharp),);
+                  },
+                )
               ),
-              SmartSelect<int>.single(
-                title: "User board",
-                selectedValue: _userBoard,
-                choiceItems: _userBoardList,
-                modalType: S2ModalType.bottomSheet,
-                onChange: (state) => _saveToLocal(1, state.value!),
+              CustomSettingsTile(
+                child: SmartSelect<String>.single(
+                  title: 'Theme',
+                  selectedValue: _theme,
+                  choiceItems: choice.themeList,
+                  modalType: S2ModalType.bottomSheet,
+                  onChange: (selected) => setState(() => _theme = selected.value!),
+                  tileBuilder: (context, state) {
+                    return S2Tile.fromState(state, isTwoLine: true, leading: const Icon(Icons.format_paint),);
+                  },
+                ),
               ),
-              SmartSelect<int>.single(
-                title: "User class",
-                selectedValue: _userClass,
-                choiceItems: _userClassList[_userBoard],
-                modalType: S2ModalType.bottomSheet,
-                onChange: (state) => _saveToLocal(2, state.value!),
+              CustomSettingsTile(
+                child: ListTile(
+                  leading: const Icon(Icons.person),
+                  title: const Text('About the Developers'),
+                  subtitle: const Text('Know more about us'),
+                  onTap: (){},
+                ),
               ),
-              SmartSelect<int>.single(
-                title: "User Proficiency",
-                selectedValue: _userProficiency,
-                choiceItems: _userProficiencyList,
-                modalType: S2ModalType.bottomSheet,
-                onChange: (state) => _saveToLocal(3, state.value!),
+              CustomSettingsTile(
+                child: ListTile(
+                  leading: const Icon(Icons.support_agent),
+                  title: const Text('Help'),
+                  subtitle: const Text('Get our Help'),
+                  onTap: (){},
+                ),
               ),
             ],
           ),
-      ),
+          _getUserTypeSettings(),
+          const CustomSettingsSection(child: CustomSettingsTile(child: SizedBox(height: 30,),))
+        ],
+      )
     );
   }
 }
