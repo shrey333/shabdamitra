@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shabdamitra/settings/settings.dart';
+import 'package:shabdamitra/search/search.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -32,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   ];
   final _listWidget = [
     const Center(child: Text("Lessons")),
-    const Center(child: Text("Search")),
+    const Search(),
     const Settings(),
   ];
 

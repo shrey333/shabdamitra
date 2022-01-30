@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shabdamitra/homepage.dart';
+import 'package:shabdamitra/choices.dart' as choice;
 
 class SelectStudentDetails extends StatefulWidget {
   const SelectStudentDetails({Key? key}) : super(key: key);
@@ -14,38 +15,6 @@ class SelectStudentDetails extends StatefulWidget {
 class _SelectStudentDetailsState extends State<SelectStudentDetails> {
   int _userClass = 0, _userBoard = 0;
   final GetStorage _storage = GetStorage();
-
-  final List<S2Choice<int>> _userBoardList = [
-    S2Choice(value: 0, title: 'CBSE'),
-    S2Choice(value: 1, title: 'SWDHAYAY'),
-    S2Choice(value: 2, title: 'ICSE'),
-    S2Choice(value: 3, title: 'MSBSHSE'),
-  ];
-  final List<List<S2Choice<int>>> _userClassList = [
-    [
-      S2Choice(value: 0, title: 'Class 1'),
-      S2Choice(value: 1, title: 'Class 2'),
-      S2Choice(value: 2, title: 'Class 3'),
-      S2Choice(value: 3, title: 'Class 4'),
-      S2Choice(value: 4, title: 'Class 5'),
-      S2Choice(value: 5, title: 'Class 6'),
-      S2Choice(value: 6, title: 'Class 7'),
-      S2Choice(value: 7, title: 'Class 8'),
-      S2Choice(value: 8, title: 'Class 9'),
-      S2Choice(value: 9, title: 'Class 10'),
-      S2Choice(value: 10, title: 'Class 11'),
-    ],
-    [
-      S2Choice(value: 0, title: 'Class 1'),
-    ],
-    [
-      S2Choice(value: 0, title: 'Class 1'),
-      S2Choice(value: 1, title: 'Class 2'),
-    ],
-    [
-      S2Choice(value: 4, title: 'Class 5'),
-    ]
-  ];
 
   void _saveToLocal(int _userDataType, int _userData) async {
     switch (_userDataType) {
@@ -141,7 +110,7 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                         child: SmartSelect<int>.single(
                           title: 'User Board',
                           selectedValue: _userBoard,
-                          choiceItems: _userBoardList,
+                          choiceItems: choice.userBoardList,
                           onChange: (state) => _saveToLocal(1, state.value!),
                           modalType: S2ModalType.bottomSheet,
                         ),
@@ -161,7 +130,7 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                         child: SmartSelect<int>.single(
                           title: "User class",
                           selectedValue: _userClass,
-                          choiceItems: _userClassList[_userBoard],
+                          choiceItems: choice.userClassList[_userBoard],
                           modalType: S2ModalType.bottomSheet,
                           onChange: (state) => _saveToLocal(2, state.value!),
                         ),
