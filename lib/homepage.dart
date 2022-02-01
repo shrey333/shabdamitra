@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shabdamitra/settings/settings.dart';
 import 'package:shabdamitra/search/search.dart';
+import 'package:shabdamitra/lessons/lessons.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -18,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _selectedIndex = _storage.read('userType');
+    _selectedIndex = _storage.read('userType') ?? 0;
   }
 
   void _onItemTapped(int index) {
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     "Settings",
   ];
   final _listWidget = [
-    const Center(child: Text("Lessons")),
+    const Lessons(),
     const Search(),
     const Settings(),
   ];
@@ -62,6 +63,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(_list[_selectedIndex]),
         centerTitle: true,
+        elevation: 0
       ),
       body: _listWidget[_selectedIndex],
     );
