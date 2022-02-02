@@ -140,7 +140,7 @@ class _ProgressState extends State<Progress> {
             indicatorBuilder: (_, index) {
               Color color;
               var child;
-              if(index == _index && index != _processes.length - 1) {
+              if(index == _index) {
                 color = inProgressColor;
                 child = const Padding(
                   padding: EdgeInsets.all(8.0),
@@ -149,8 +149,8 @@ class _ProgressState extends State<Progress> {
                     valueColor: AlwaysStoppedAnimation(Colors.white),
                   ),
                 );
-              } else if (index < _index || index == _processes.length - 1) {
-                color = index == _processes.length - 1 ? inProgressColor : completeColor;
+              } else if (index < _index) {
+                color = completeColor;
                 child = Icon(
                   Icons.check,
                   color: Colors.white,
@@ -159,7 +159,14 @@ class _ProgressState extends State<Progress> {
               } else {
                 color = todoColor;
               }
-
+              if(index == _processes.length - 1) {
+                child = Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 15.0,
+                );
+                color = _index == _processes.length - 1 ? inProgressColor : todoColor;
+              }
               if(index <= _index) {
                 return Stack(
                   children: [
