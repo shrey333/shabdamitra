@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shabdamitra/ErrorHandlers/not_found.dart';
 import 'package:shabdamitra/ErrorHandlers/error.dart';
+import 'package:shabdamitra/db/db_manager.dart';
 import 'package:shabdamitra/homepage.dart';
 import 'package:shabdamitra/onboarding/introduction.dart';
 
@@ -12,6 +13,7 @@ void main() async {
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
   runApp(MyApp());
+  DbManager().ensureDbConnectionClosed();
 }
 
 class MyApp extends StatelessWidget {
@@ -33,7 +35,8 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Inter',
       ),
       builder: (context, widget) {
-        ErrorWidget.builder = (FlutterErrorDetails details) => const ErrorRoute();
+        ErrorWidget.builder =
+            (FlutterErrorDetails details) => const ErrorRoute();
         Widget a = widget as Widget;
         return a;
       },

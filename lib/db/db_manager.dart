@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
-import 'package:shabdamitra/db/synset.dart';
-import 'package:shabdamitra/db/word.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbManager {
@@ -90,7 +88,8 @@ class DbManager {
     });
   }
 
-  Future<List<Map<String, Object?>>> getLessonWords(String board, int standard, int lesson) {
+  Future<List<Map<String, Object?>>> getLessonWords(
+      String board, int standard, int lesson) {
     return _db.rawQuery(
         'WITH word_id(wi) AS ( '
         'SELECT word_id FROM tcp_word_collection '
@@ -99,5 +98,9 @@ class DbManager {
         'FROM word_id INNER JOIN tcp_word '
         'ON word_id.wi = tcp_word.word_id ',
         [board, standard, lesson]);
+  }
+
+  void ensureDbConnectionClosed() {
+    _db.close();
   }
 }
