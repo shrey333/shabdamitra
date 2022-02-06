@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shabdamitra/onboarding/select_user_type.dart';
@@ -6,7 +7,7 @@ class Features extends StatelessWidget {
   const Features({Key? key}) : super(key: key);
 
   _onNext() {
-    Get.to(const SelectUserType());
+    Get.to(() => const SelectUserType());
   }
 
   @override
@@ -20,25 +21,17 @@ class Features extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         minimum: EdgeInsets.all(_inset),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: Center(
-                  child: SizedBox(
-                    height: 0.3 * _height,
-                    width: _width,
-                    child: Image.asset("assets/images/learn.png"),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Flexible(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Flexible(
+                    child: Image.asset('assets/images/learn.png'),
                   ),
-                ),
-              ),
-              Center(
-                child: SizedBox(
-                  height: 0.15 * _height,
-                  width: _width,
-                  child: Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       SizedBox(
@@ -58,42 +51,41 @@ class Features extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
-                child: SizedBox(
-                  height: 0.2 * _height,
-                  width: _width,
-                  child: Text(
-                    "Learning words and grammar using images and audio",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 0.025 * _height,
-                      color: Colors.black45,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 130,
-                child: Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: ElevatedButton(
-                    onPressed: _onNext,
-                    child: const Text(
-                      ' N E X T ->',
+                  const Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                    child: AutoSizeText(
+                      "Learning words and grammar using images and audio",
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        color: Colors.black45,
                       ),
                     ),
                   ),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 0.15 * _height,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ElevatedButton(
+                  onPressed: _onNext,
+                  child: const AutoSizeText(
+                    ' N E X T ->',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

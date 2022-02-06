@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_select/awesome_select.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,7 +44,7 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
     _storage.write('userBoard', _userBoard);
     _storage.write('userClass', _userClass);
     _storage.write('onboardingDone', true);
-    Get.offAll(const HomePage());
+    Get.offAll(() => const HomePage());
   }
 
   @override
@@ -61,34 +62,34 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
             children: [
               SizedBox(
                 width: _width,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.all(35.0),
-                      child: Text(
-                        "Tell us about you",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
+                child: const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: AutoSizeText(
+                    "Tell us about you",
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
                     ),
-                  ],
+                  ),
                 ),
               ),
-              SizedBox(
-                height: _height * 0.5,
-                width: _width,
+              Flexible(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 5,
+                      ),
                       child: const Center(
-                        child: Text(
-                          "I am a Student of...",
+                        child: AutoSizeText(
+                          "I am a student of...",
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
                           style: TextStyle(
                             fontSize: 20,
                             color: Colors.black45,
@@ -97,14 +98,17 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 5,
+                      ),
                       height: MediaQuery.of(context).size.height * 0.099,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         border: Border.all(
-                                color: Colors.black12,
-                                width: 1.0,
-                              ),
+                          color: Colors.black12,
+                          width: 1.0,
+                        ),
                       ),
                       child: Center(
                         child: SmartSelect<int>.single(
@@ -117,14 +121,17 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 5,
+                      ),
                       height: MediaQuery.of(context).size.height * 0.099,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         border: Border.all(
-                                color: Colors.black12,
-                                width: 1.0,
-                              ),
+                          color: Colors.black12,
+                          width: 1.0,
+                        ),
                       ),
                       child: Center(
                         child: SmartSelect<int>.single(
@@ -141,13 +148,15 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: 130,
+                height: 0.15 * _height,
                 child: Padding(
-                  padding: const EdgeInsets.all(30.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
                     onPressed: _onFinish,
-                    child: const Text(
+                    child: const AutoSizeText(
                       ' F I N I S H !',
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

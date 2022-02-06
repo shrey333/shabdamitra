@@ -4,7 +4,6 @@ import 'package:shabdamitra/settings/settings.dart';
 import 'package:shabdamitra/search/search.dart';
 import 'package:shabdamitra/lessons/lessons.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -63,7 +62,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(_list[_selectedIndex]),
         centerTitle: true,
-        elevation: 0
+        elevation: 0,
       ),
       body: _listWidget[_selectedIndex],
     );

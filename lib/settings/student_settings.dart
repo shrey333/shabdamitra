@@ -4,7 +4,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:shabdamitra/choices.dart' as choice;
 
-
 class StudentSettings extends StatefulWidget {
   const StudentSettings({Key? key}) : super(key: key);
 
@@ -13,7 +12,11 @@ class StudentSettings extends StatefulWidget {
 }
 
 class _StudentSettingsState extends State<StudentSettings> {
-  int _userType = 0, _userBoard = 0, _userClass = 0, _userProficiency = 0, _language = 0;
+  int _userType = 0,
+      _userBoard = 0,
+      _userClass = 0,
+      _userProficiency = 0,
+      _language = 0;
   final GetStorage _storage = GetStorage();
 
   @override
@@ -74,39 +77,47 @@ class _StudentSettingsState extends State<StudentSettings> {
       appBar: AppBar(),
       body: SafeArea(
           child: SettingsList(
-            sections: [
-              SettingsSection(
-                  title: const Text('Student Settings'),
-                  tiles: [
-                    CustomSettingsTile(
-                      child: SmartSelect<int>.single(
-                        title: "User board",
-                        selectedValue: _userBoard,
-                        choiceItems: choice.userBoardList,
-                        modalType: S2ModalType.bottomSheet,
-                        onChange: (state) => _saveToLocal(1, state.value!),
-                        tileBuilder: (context, state) {
-                          return S2Tile.fromState(state, isTwoLine: true, leading: const Icon(Icons.collections_bookmark),);
-                        },
-                      ),
+        sections: [
+          SettingsSection(title: const Text('Student Settings'), tiles: [
+            CustomSettingsTile(
+              child: SmartSelect<int>.single(
+                title: "User board",
+                selectedValue: _userBoard,
+                choiceItems: choice.userBoardList,
+                modalType: S2ModalType.bottomSheet,
+                onChange: (state) => _saveToLocal(1, state.value!),
+                tileBuilder: (context, state) {
+                  return S2Tile.fromState(
+                    state,
+                    isTwoLine: true,
+                    leading: const CircleAvatar(
+                      child: Icon(Icons.collections_bookmark),
                     ),
-                    CustomSettingsTile(
-                      child: SmartSelect<int>.single(
-                        title: "User class",
-                        selectedValue: _userClass,
-                        choiceItems: choice.userClassList[_userBoard],
-                        modalType: S2ModalType.bottomSheet,
-                        onChange: (state) => _saveToLocal(2, state.value!),
-                        tileBuilder: (context, state) {
-                          return S2Tile.fromState(state, isTwoLine: true, leading: const Icon(Icons.class__outlined),);
-                        },
-                      ),
-                    )
-                  ]
-              )
-            ],
-          )
-      ),
+                  );
+                },
+              ),
+            ),
+            CustomSettingsTile(
+              child: SmartSelect<int>.single(
+                title: "User class",
+                selectedValue: _userClass,
+                choiceItems: choice.userClassList[_userBoard],
+                modalType: S2ModalType.bottomSheet,
+                onChange: (state) => _saveToLocal(2, state.value!),
+                tileBuilder: (context, state) {
+                  return S2Tile.fromState(
+                    state,
+                    isTwoLine: true,
+                    leading: const CircleAvatar(
+                      child: Icon(Icons.class__outlined),
+                    ),
+                  );
+                },
+              ),
+            )
+          ])
+        ],
+      )),
     );
   }
 }
