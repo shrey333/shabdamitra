@@ -14,7 +14,6 @@ class Progress extends StatefulWidget {
   _ProgressState createState() => _ProgressState();
 }
 
-/// hardcoded bezier painter
 class _BezierPainter extends CustomPainter {
   const _BezierPainter({
     required this.color,
@@ -141,7 +140,7 @@ class _ProgressState extends State<Progress> {
           indicatorBuilder: (_, index) {
             Color color;
             Widget? child;
-            if (index == _index && index != _processes.length - 1) {
+            if (index == _index) {
               color = inProgressColor;
               child = const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -150,59 +149,31 @@ class _ProgressState extends State<Progress> {
                   valueColor: AlwaysStoppedAnimation(Colors.white),
                 ),
               );
-            } else if (index < _index || index == _processes.length - 1) {
-              color = index == _processes.length - 1
-                  ? inProgressColor
-                  : completeColor;
+            } else if (index < _index) {
+              color = completeColor;
               child = const Icon(
                 Icons.check,
                 color: Colors.white,
                 size: 15.0,
               );
-            },
-            indicatorBuilder: (_, index) {
-              Color color;
-              var child;
-              if(index == _index) {
-                color = inProgressColor;
-                child = const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3.0,
-                    valueColor: AlwaysStoppedAnimation(Colors.white),
-                  ),
-                );
-              } else if (index < _index) {
-                color = completeColor;
-                child = Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 15.0,
-                );
-              } else {
-                color = todoColor;
-              }
-              if(index == _processes.length - 1) {
-                child = Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 15.0,
-                );
-                color = _index == _processes.length - 1 ? inProgressColor : todoColor;
-              }
-              if(index <= _index) {
-                return Stack(
-                  children: [
-                    CustomPaint(
-                      size: const Size(30.0, 30.0),
-                      painter: _BezierPainter(
-                        color: color,
-                        drawStart: index > 0,
-                        drawEnd: index < _index,
-                      ),
-                    ),
-                    DotIndicator(
-                      size: 30.0,
+            } else {
+              color = todoColor;
+            }
+            if (index == _processes.length - 1) {
+              child = const Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 15.0,
+              );
+              color =
+                  _index == _processes.length - 1 ? inProgressColor : todoColor;
+            }
+            if (index <= _index) {
+              return Stack(
+                children: [
+                  CustomPaint(
+                    size: const Size(30.0, 30.0),
+                    painter: _BezierPainter(
                       color: color,
                       drawStart: index > 0,
                       drawEnd: index < _index,
