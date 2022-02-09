@@ -159,16 +159,50 @@ class _ProgressState extends State<Progress> {
                 color: Colors.white,
                 size: 15.0,
               );
-            } else {
-              color = todoColor;
-            }
-
-            if (index <= _index) {
-              return Stack(
-                children: [
-                  CustomPaint(
-                    size: const Size(30.0, 30.0),
-                    painter: _BezierPainter(
+            },
+            indicatorBuilder: (_, index) {
+              Color color;
+              var child;
+              if(index == _index) {
+                color = inProgressColor;
+                child = const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3.0,
+                    valueColor: AlwaysStoppedAnimation(Colors.white),
+                  ),
+                );
+              } else if (index < _index) {
+                color = completeColor;
+                child = Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 15.0,
+                );
+              } else {
+                color = todoColor;
+              }
+              if(index == _processes.length - 1) {
+                child = Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 15.0,
+                );
+                color = _index == _processes.length - 1 ? inProgressColor : todoColor;
+              }
+              if(index <= _index) {
+                return Stack(
+                  children: [
+                    CustomPaint(
+                      size: const Size(30.0, 30.0),
+                      painter: _BezierPainter(
+                        color: color,
+                        drawStart: index > 0,
+                        drawEnd: index < _index,
+                      ),
+                    ),
+                    DotIndicator(
+                      size: 30.0,
                       color: color,
                       drawStart: index > 0,
                       drawEnd: index < _index,
