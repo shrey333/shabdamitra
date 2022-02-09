@@ -11,9 +11,12 @@ class LearnerSettings extends StatefulWidget {
   _LearnerSettingsState createState() => _LearnerSettingsState();
 }
 
-class _LearnerSettingsState extends State<LearnerSettings>{
-
-  int _userType = 0, _userBoard = 0, _userClass = 0, _userProficiency = 0, _language = 0;
+class _LearnerSettingsState extends State<LearnerSettings> {
+  int _userType = 0,
+      _userBoard = 0,
+      _userClass = 0,
+      _userProficiency = 0,
+      _language = 0;
   final GetStorage _storage = GetStorage();
 
   @override
@@ -70,34 +73,32 @@ class _LearnerSettingsState extends State<LearnerSettings>{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return
-      Scaffold(
-        appBar: AppBar(),
-        body: SafeArea(
-          child: SettingsList(
-              sections: [
-                SettingsSection(
-                    title: const Text('Learner Settings'),
-                    tiles: [
-                      CustomSettingsTile(
-                        child: SmartSelect<int>.single(
-                          title: "Proficiency Level",
-                          selectedValue: _userProficiency,
-                          choiceItems: choice.userProficiencyList,
-                          modalType: S2ModalType.bottomSheet,
-                          onChange: (state) => _saveToLocal(3, state.value!),
-                          tileBuilder: (context, state) {
-                            return S2Tile.fromState(state, isTwoLine: true, leading: const Icon(Icons.sort),);
-                          },
-                        ),
-                      )
-                    ]
-                )
-              ]
-          ),
-        ),
-      );
+    return Scaffold(
+      appBar: AppBar(),
+      body: SafeArea(
+        child: SettingsList(sections: [
+          SettingsSection(title: const Text('Learner Settings'), tiles: [
+            CustomSettingsTile(
+              child: SmartSelect<int>.single(
+                title: "Proficiency Level",
+                selectedValue: _userProficiency,
+                choiceItems: choice.userProficiencyList,
+                modalType: S2ModalType.bottomSheet,
+                onChange: (state) => _saveToLocal(3, state.value!),
+                tileBuilder: (context, state) {
+                  return S2Tile.fromState(
+                    state,
+                    isTwoLine: true,
+                    leading: const CircleAvatar(
+                      child: Icon(Icons.sort),
+                    ),
+                  );
+                },
+              ),
+            )
+          ])
+        ]),
+      ),
+    );
   }
 }
-

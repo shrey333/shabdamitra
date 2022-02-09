@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:flappy_search_bar_ns/search_bar_style.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter/material.dart';
 import 'package:flappy_search_bar_ns/flappy_search_bar_ns.dart';
 
@@ -19,24 +17,24 @@ class Search extends StatefulWidget {
 
   @override
   _SearchState createState() => _SearchState();
-
 }
 
-class _SearchState extends State<Search>{
-
+class _SearchState extends State<Search> {
   final SearchBarController<Word> _searchBarController = SearchBarController();
 
   Future<List<Word>> _getResult(String? text) async {
     await Future.delayed(const Duration(seconds: 2));
     if (text?.length == 8) throw Error();
-    const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    const _chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     List<Word> w = [];
     var random = Random();
 
-    String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
-        length, (_) => _chars.codeUnitAt(random.nextInt(_chars.length))));
+    String getRandomString(int length) =>
+        String.fromCharCodes(Iterable.generate(
+            length, (_) => _chars.codeUnitAt(random.nextInt(_chars.length))));
 
-    for(int i=0;i<10;i++) {
+    for (int i = 0; i < 10; i++) {
       w.add(Word("$text $i", "Meaning: ${getRandomString(20)}"));
     }
 
@@ -45,10 +43,9 @@ class _SearchState extends State<Search>{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-      body: SafeArea(
-        child: SearchBar<Word>(
+    return SafeArea(
+      child: Scaffold(
+        body: SearchBar<Word>(
           searchBarStyle: SearchBarStyle(
             backgroundColor: const Color.fromRGBO(254, 254, 255, 255),
             padding: const EdgeInsets.all(10),
@@ -58,26 +55,26 @@ class _SearchState extends State<Search>{
           headerPadding: const EdgeInsets.symmetric(horizontal: 10),
           listPadding: const EdgeInsets.symmetric(horizontal: 10),
           searchBarController: _searchBarController,
-          onError: (error) => Center(child: Text('ERROR: ${error.toString()}'),),
-          placeHolder:
-          Container(
-            margin: const EdgeInsets.all(10),
-            child: Column(
-             children: [
-               Image.asset("assets/images/Questions.gif"),
-             ],
+          onError: (error) => Center(
+            child: Text('ERROR: ${error.toString()}'),
+          ),
+          placeHolder: Flexible(
+            child: Center(
+              child: Image.asset("assets/images/Questions.gif"),
             ),
           ),
-
           onSearch: _getResult,
-          cancellationWidget: const Text("Cancel", style: TextStyle(color: Colors.blue),),
+          cancellationWidget: const Text(
+            "Cancel",
+            style: TextStyle(color: Colors.blue),
+          ),
           emptyWidget: const Center(child: Text("No Such Entry")),
-          onCancelled: (){},
+          onCancelled: () {},
           hintText: "Search Our Hindi Shabdamitra",
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
           crossAxisCount: 1,
-          onItemFound: (Word? w, int index){
+          onItemFound: (Word? w, int index) {
             return ListTile(
               leading: CircleAvatar(
                 backgroundColor: Colors.blue.shade500,
@@ -86,7 +83,8 @@ class _SearchState extends State<Search>{
               title: Text(w.word),
               subtitle: Text(w.meaning),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Detail(w)));
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => Detail(w)));
               },
             );
           },
@@ -94,94 +92,86 @@ class _SearchState extends State<Search>{
       ),
     );
   }
-
 }
 
 class Detail extends StatelessWidget {
-
   final Word w;
   const Detail(this.w, {Key? key}) : super(key: key);
 
-
-  Future _speak(String s) async {
-    var flutterTts = FlutterTts();    
-    flutterTts.setLanguage("hi-IN");
-    await flutterTts.speak(s);
-  }
+  void _speak(String s) {}
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-      body: SafeArea(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Card(
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  elevation: 4.0,
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: () => Navigator.of(context).pop(),
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Card(
+                margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                elevation: 4.0,
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.volume_up),
+                        onPressed: () => _speak(w.word),
+                      ),
+                      title: Text(w.word),
+                      subtitle: Text(
+                        w.meaning,
+                        style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                      ),
+                    ),
+                    Flexible(
+                      child: Ink.image(
+                        image: const NetworkImage(
+                            "https://source.unsplash.com/random/800x600?house"),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      alignment: Alignment.centerLeft,
+                      child: const Text(
+                          "Beautiful home to rent, recently refurbished with modern appliances..."),
+                    ),
+                    ButtonBar(
+                      children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text('Synonym 1'),
                         ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.volume_up),
-                          onPressed: () => _speak(w.word),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text('Synonym 2'),
                         ),
-                        title: Text(w.word),
-                        subtitle: Text(
-                          w.meaning,
-                          style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                      ],
+                    ),
+                    ButtonBar(
+                      children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text('Antonym 1'),
                         ),
-                      ),
-                      SizedBox(
-                        height: 200,
-                        child: Ink.image(
-                          image: const NetworkImage("https://source.unsplash.com/random/800x600?house"),
-                          fit: BoxFit.cover,
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text('Antonym 2'),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(16.0),
-                        alignment: Alignment.centerLeft,
-                        child: const Text("Beautiful home to rent, recently refurbished with modern appliances..."),
-                      ),
-                      ButtonBar(
-                        children: [
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text('Synonym 1'),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text('Synonym 2'),
-                          ),
-                        ],
-                      ),
-                      ButtonBar(
-                        children: [
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text('Antonym 1'),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text('Antonym 2'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
+            ],
           ),
         ),
       ),
     );
   }
-  
 }

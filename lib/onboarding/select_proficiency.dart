@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -27,15 +28,20 @@ class _SelectProficiencyState extends State<SelectProficiency> {
               ))
             : null,
       ),
-      margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+      margin: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 5,
+      ),
       child: OutlinedButton(
         onPressed: () {
           setState(() {
             _selectedIndex = index;
           });
         },
-        child: Text(
+        child: AutoSizeText(
           text,
+          maxLines: 1,
+          textAlign: TextAlign.center,
           style: TextStyle(
             color: (_selectedIndex == index) ? (Colors.blue) : (Colors.grey),
             fontWeight: (_selectedIndex == index)
@@ -48,27 +54,28 @@ class _SelectProficiencyState extends State<SelectProficiency> {
   }
 
   void _onFinish() async {
-    if(_selectedIndex == 0){
-      showDialog(context: context
-      , builder: (_) =>  AlertDialog(
-            title: const Text('Proficiency level is missing!!!'),
-            content: const Text('Proficiency is required because you will be shown words based open it.'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Okay '),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+    if (_selectedIndex == 0) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Proficiency level is missing!!!'),
+          content: const Text(
+              'Proficiency is required because you will be shown words based open it.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Okay '),
+              onPressed: () {
+                Get.back();
+              },
+            ),
+          ],
         ),
       );
-    }
-    else{
+    } else {
       _storage.write('userProficiency', _selectedIndex - 1);
       _storage.write('userBoard', 0);
       _storage.write('userClass', 0);
-      Get.offAll(const HomePage());
+      Get.offAll(() => const HomePage());
     }
   }
 
@@ -88,51 +95,52 @@ class _SelectProficiencyState extends State<SelectProficiency> {
             children: [
               SizedBox(
                 width: MediaQuery.of(context).size.width,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.all(35.0),
-                      child: Text(
-                        "Tell us about you",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
+                child: const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: AutoSizeText(
+                    "Tell us about you",
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
                     ),
-                  ],
+                  ),
                 ),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.50,
-                width: MediaQuery.of(context).size.width,
+              Flexible(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.fromLTRB(30, 10, 30, 5),
-                      child: const Center(
-                        child: Text(
-                          "How familiar are you with Hindi?",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black45,
-                          ),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 5,
+                      ),
+                      child: const AutoSizeText(
+                        "How familiar are you with Hindi?",
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black45,
                         ),
                       ),
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.fromLTRB(30, 0, 30, 10),
-                      child: const Center(
-                        child: Text(
-                          "Dictate the information that will be shown.",
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.black26,
-                          ),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 5,
+                      ),
+                      child: const AutoSizeText(
+                        "Dictate the information that will be shown.",
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.black26,
                         ),
                       ),
                     ),
@@ -144,13 +152,15 @@ class _SelectProficiencyState extends State<SelectProficiency> {
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: 130,
+                height: _height * 0.15,
                 child: Padding(
-                  padding: const EdgeInsets.all(30.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
                     onPressed: _onFinish,
-                    child: const Text(
+                    child: const AutoSizeText(
                       ' F I N I S H !',
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

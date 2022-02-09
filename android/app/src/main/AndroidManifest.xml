@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.shabdamitra">
+    <uses-permission android:name="android.permission.INTERNET" android:usesCleartextTraffic="true"/>
    <application
         android:label="shabdamitra"
         android:name="${applicationName}"
