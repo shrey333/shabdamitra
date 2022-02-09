@@ -13,6 +13,7 @@ class WordDisplay extends StatefulWidget {
 }
 
 class _WordDisplayState extends State<WordDisplay> {
+  final height = Get.height;
   final player = AudioPlayer();
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class _WordDisplayState extends State<WordDisplay> {
                       errorWidget: (context, url, error) =>
                           const Icon(Icons.error),
                       fit: BoxFit.cover,
-                      height: 300,
+                      height: height * 0.3,
                     ),
                   ),
                   const ListTile(

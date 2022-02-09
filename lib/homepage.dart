@@ -27,11 +27,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  final _list = [
-    "Lessons",
-    "Search",
-    "Settings",
-  ];
   final _listWidget = [
     const Lessons(),
     const Search(),
@@ -58,11 +53,6 @@ class _HomePageState extends State<HomePage> {
             label: 'Settings',
           ),
         ],
-      ),
-      appBar: AppBar(
-        title: Text(_list[_selectedIndex]),
-        centerTitle: true,
-        elevation: 0,
       ),
       body: _listWidget[_selectedIndex],
     );
