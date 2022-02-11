@@ -23,7 +23,7 @@ class _GetLessonsState extends State<GetLessons> {
     return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        itemCount: 10,
+        itemCount: 50,
         itemBuilder: (context, index) {
           var _val = _getRandomValue(0, 1);
           var _per = _val * 100;
@@ -32,7 +32,10 @@ class _GetLessonsState extends State<GetLessons> {
           _val = _per / 100;
           return Card(
             elevation: 2,
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            margin: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 4,
+            ),
             child: ListTile(
               leading: const CircleAvatar(
                 child: Icon(Icons.book),
@@ -45,7 +48,9 @@ class _GetLessonsState extends State<GetLessons> {
                 children: <Widget>[
                   SizedBox(
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(6),
+                      ),
                       child: LinearProgressIndicator(
                         valueColor:
                             const AlwaysStoppedAnimation<Color>(Colors.green),
@@ -61,7 +66,9 @@ class _GetLessonsState extends State<GetLessons> {
                       : const Text(' Completed 100%')
                 ],
               ),
-              trailing: const Icon(Icons.keyboard_arrow_right, size: 30.0),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+              ),
               onTap: () {
                 Get.to(() => const WordLists());
               },

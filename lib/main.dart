@@ -33,7 +33,8 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Inter',
       ),
       builder: (context, widget) {
-        ErrorWidget.builder = (FlutterErrorDetails details) => const ErrorRoute();
+        ErrorWidget.builder =
+            (FlutterErrorDetails details) => const ErrorRoute();
         Widget a = widget as Widget;
         return a;
       },

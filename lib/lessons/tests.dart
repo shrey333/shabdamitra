@@ -48,7 +48,10 @@ class _TestsState extends State<Tests> {
           _val = _per / 100;
           return Card(
             elevation: 2,
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            margin: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 4,
+            ),
             child: ListTile(
               leading: const CircleAvatar(
                 child: Icon(Icons.book),
@@ -62,7 +65,9 @@ class _TestsState extends State<Tests> {
                   //Icon(Icons.linear_scale, color: Colors.yellowAccent),
                   SizedBox(
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(6)),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(6),
+                      ),
                       child: LinearProgressIndicator(
                         valueColor: _getColor(_val),
                         backgroundColor: const Color(0xffD6D6D6),
@@ -76,8 +81,7 @@ class _TestsState extends State<Tests> {
                 ],
               ),
               trailing: const Icon(
-                Icons.keyboard_arrow_right,
-                size: 30.0,
+                Icons.arrow_forward_ios,
               ),
               onTap: () {},
             ),

@@ -32,7 +32,7 @@ class _LessonsState extends State<Lessons> {
                     text: 'Progress',
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
