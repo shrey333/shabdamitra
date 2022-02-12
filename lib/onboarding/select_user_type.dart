@@ -29,17 +29,19 @@ class _SelectUserTypeState extends State<SelectUserType> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         border: (_selectedIndex == index)
-            ? (Border.all(
+            ? Border.all(
                 color: Colors.black,
                 width: 3.0,
-              ))
+              )
             : null,
       ),
       child: OutlinedButton(
         onPressed: () {
-          setState(() {
-            _selectedIndex = index;
-          });
+          setState(
+            () {
+              _selectedIndex = index;
+            },
+          );
         },
         child: Padding(
           padding: const EdgeInsets.all(5.0),

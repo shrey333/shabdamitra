@@ -43,6 +43,7 @@ dependencies:
   just_audio: ^0.9.18
   timelines: ^0.1.0
   auto_size_text: ^3.0.0
+  material_floating_search_bar: ^0.3.6
 
 dev_dependencies:
   flutter_test:

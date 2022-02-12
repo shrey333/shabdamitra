@@ -18,26 +18,28 @@ class _WordListsState extends State<WordLists> {
   Widget build(BuildContext context) {
     var items = _getItems();
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Word Lists"),
-        ),
-        body: ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              return Container(
-                child: ListTile(
-                  minVerticalPadding: 10,
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blue.shade500,
-                    child: Text(items[index][0]),
-                  ),
-                  title: Text(items[index]),
-                  onTap: () {
-                    Get.to(() => const WordDisplay());
-                  },
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 5),
-              );
-            }));
+      appBar: AppBar(
+        title: const Text("Word Lists"),
+      ),
+      body: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return Container(
+            child: ListTile(
+              minVerticalPadding: 10,
+              leading: CircleAvatar(
+                backgroundColor: Colors.blue.shade500,
+                child: Text(items[index][0]),
+              ),
+              title: Text(items[index]),
+              onTap: () {
+                Get.to(() => const WordDisplay());
+              },
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 5),
+          );
+        },
+      ),
+    );
   }
 }
