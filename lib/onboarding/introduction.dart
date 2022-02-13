@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shabdamitra/onboarding/features.dart';
@@ -6,7 +7,7 @@ class Introduction extends StatelessWidget {
   const Introduction({Key? key}) : super(key: key);
 
   _onNext() {
-    Get.to(const Features());
+    Get.to(() => const Features());
   }
 
   @override
@@ -28,52 +29,53 @@ class Introduction extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children:  const [
+                  children: const [
                     Padding(
-                      padding: EdgeInsets.fromLTRB(35.0, 35.0, 35.0, 20.0),
-                      child: Text(
+                      padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
+                      child: AutoSizeText(
                         "Shabdamitra",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 50,
                           fontWeight: FontWeight.w900,
                         ),
+                        maxLines: 1,
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 30.0),
-                      child: Text(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child: AutoSizeText(
                         "A digital learning aid for teaching and learning Hindi",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.black45,
                         ),
+                        maxLines: 2,
                       ),
                     ),
                   ],
                 ),
               ),
-              Center(
-                child: SizedBox(
-                  height: 0.4 * _height,
-                  width: _width,
+              Flexible(
+                child: Center(
                   child: Image.asset("assets/images/teaching.png"),
                 ),
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: 130,
+                height: _height * 0.15,
                 child: Padding(
-                  padding: const EdgeInsets.all(30.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
                     onPressed: _onNext,
-                    child: const Text(
+                    child: const AutoSizeText(
                       ' Get Started ! ->',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 1,
                     ),
                   ),
                 ),

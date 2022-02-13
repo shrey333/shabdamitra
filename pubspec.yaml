@@ -37,11 +37,15 @@ dependencies:
   get_storage: ^2.0.3
   awesome_select: ^5.1.0
   flappy_search_bar_ns: ^2.0.2
-  flutter_tts: ^3.3.3
   settings_ui: ^2.0.2
+  card_swiper: ^2.0.1
+  cached_network_image: ^3.2.0
+  just_audio: ^0.9.18
   timelines: ^0.1.0
   sqflite: ^2.0.2
   path:
+  auto_size_text: ^3.0.0
+  material_floating_search_bar: ^0.3.6
 
 dev_dependencies:
   flutter_test:

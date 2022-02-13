@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:shabdamitra/lessons/get_lessons.dart';
 import 'package:shabdamitra/lessons/progress.dart';
 import 'package:shabdamitra/lessons/tests.dart';
-import 'package:shabdamitra/lessons/word_lists.dart';
 
 class Lessons extends StatefulWidget {
   const Lessons({Key? key}) : super(key: key);
@@ -34,7 +32,7 @@ class _LessonsState extends State<Lessons> {
                     text: 'Progress',
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
