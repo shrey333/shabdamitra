@@ -16,3 +16,15 @@ Gender genderFrom(String gender) {
     return Gender.unknown;
   }
 }
+
+String genderToString(Gender gender) {
+  if (gender == Gender.feminine) {
+    return 'स्त्रीलिंग';
+  } else if (gender == Gender.masculine) {
+    return 'पुल्लिंग';
+  } else if (gender == Gender.genderNeutral) {
+    return 'पुल्लिंग एवं स्त्रीलिंग';
+  } else {
+    return 'अनजान';
+  }
+}

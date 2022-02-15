@@ -2,6 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:shabdamitra/choices.dart';
+import 'package:shabdamitra/db/data_manager.dart';
+import 'package:shabdamitra/db/lesson.dart';
 import 'package:shabdamitra/lessons/word_lists.dart';
 
 class GetLessons extends StatefulWidget {
@@ -12,10 +16,18 @@ class GetLessons extends StatefulWidget {
 }
 
 class _GetLessonsState extends State<GetLessons> {
+  List<Lesson> lessons = <Lesson>[];
+
   _getRandomValue(int min, int max) {
     final _random = Random();
     var a = min + _random.nextDouble() * (max - min);
     return a;
+  }
+
+  _GetLessonsState() {
+    getLessons().then((value) => setState(() {
+          lessons = value;
+        }));
   }
 
   @override
@@ -23,7 +35,7 @@ class _GetLessonsState extends State<GetLessons> {
     return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        itemCount: 50,
+        itemCount: lessons.length,
         itemBuilder: (context, index) {
           var _val = _getRandomValue(0, 1);
           var _per = _val * 100;
@@ -41,7 +53,7 @@ class _GetLessonsState extends State<GetLessons> {
                 child: Icon(Icons.book),
               ),
               title: Text(
-                "Lesson ${index + 1}",
+                "Lesson ${lessons[index].lessonId}",
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Row(
@@ -70,10 +82,18 @@ class _GetLessonsState extends State<GetLessons> {
                 Icons.arrow_forward_ios,
               ),
               onTap: () {
-                Get.to(() => const WordLists());
+                Get.to(() => WordLists(lesson: lessons[index]));
               },
             ),
           );
         });
+  }
+
+  Future<List<Lesson>> getLessons() {
+    var storage = GetStorage();
+    String board = userBoardList[storage.read('userBoard')];
+    int standard = storage.read('userClass');
+    var dataManager = DataManager.withHints(board, standard);
+    return dataManager.getLessons();
   }
 }

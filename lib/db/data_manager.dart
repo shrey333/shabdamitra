@@ -66,11 +66,41 @@ class DataManager {
     } else {
       conceptDefinitions = await _dbManager.getSynsets(word.wordId);
     }
-    return conceptDefinitions.map((map) {
-      return Synset(
+    List<Synset> synsets = <Synset>[];
+    for (var conceptDefinition in conceptDefinitions) {
+      var examples =
+          await _dbManager.getExamples(conceptDefinition['synset_id'] as int);
+      synsets.add(Synset(
           dataManager: this,
-          synsetId: map['synset_id'] as int,
-          conceptDefinition: map['concept_definition'] as String);
+          synsetId: conceptDefinition['synset_id'] as int,
+          conceptDefinition: conceptDefinition['concept_definition'] as String,
+          examples: examples
+              .map((example) => example['example_content'] as String)
+              .toList()));
+    }
+    return synsets;
+  }
+
+  Future<List<Word>> getSynonyms(int wordId, int synsetId) async {
+    var synonyms = await _dbManager.getSynonyms(wordId, synsetId);
+    return synonyms.map((synonym) {
+      return Word(
+          dataManager: this,
+          wordId: synonym['word_id'] as int,
+          word: synonym['word'] as String);
     }).toList();
+  }
+
+  Future<String> getPluralForm(int wordId, int synsetId) {
+    return _dbManager.getPluralForm(wordId, synsetId);
+  }
+
+  Future<List<Word>> getOpposites(int wordId, int synsetId) async {
+    var opposites = await _dbManager.getOpposites(wordId, synsetId);
+    var oppositeWords = <Word>[];
+    for (var opposite in opposites) {
+      oppositeWords.add(await getWord(opposite));
+    }
+    return oppositeWords;
   }
 }

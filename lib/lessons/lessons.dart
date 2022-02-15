@@ -14,7 +14,7 @@ class _LessonsState extends State<Lessons> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 1,
       child: Scaffold(
         appBar: AppBar(
           flexibleSpace: Column(
@@ -25,12 +25,12 @@ class _LessonsState extends State<Lessons> {
                   Tab(
                     text: 'Lessons',
                   ),
-                  Tab(
-                    text: 'Tests',
-                  ),
-                  Tab(
-                    text: 'Progress',
-                  ),
+                  // Tab(
+                  //   text: 'Tests',
+                  // ),
+                  // Tab(
+                  //   text: 'Progress',
+                  // ),
                 ],
               ),
             ],
@@ -39,8 +39,8 @@ class _LessonsState extends State<Lessons> {
         body: const TabBarView(
           children: [
             GetLessons(),
-            Tests(),
-            Progress(),
+            // Tests(),
+            // Progress(),
           ],
         ),
       ),
