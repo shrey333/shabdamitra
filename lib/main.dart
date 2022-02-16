@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Following line of code is for dev only.
     // Makes sure that onboarding is show on every run.
-     _storage.remove('onboardingDone');
+    //  _storage.remove('onboardingDone');
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Shabdamitra',

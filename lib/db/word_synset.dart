@@ -17,7 +17,7 @@ class WordSynset {
   bool _gotPluralForm = false;
   List<Word> _synonyms = <Word>[];
   bool _gotSynonyms = false;
-  List<Word> _opposites = <Word>[];
+  List<String> _opposites = <String>[];
   bool _gotOpposites = false;
 
   WordSynset({
@@ -41,7 +41,7 @@ class WordSynset {
   }
 
   Future<List<Word>> getSynonyms() async {
-    if (_gotSynonyms) {
+    if (!_gotSynonyms) {
       _synonyms = await dataManager.getSynonyms(word.wordId, synset.synsetId);
       _gotSynonyms = true;
     }
@@ -49,7 +49,7 @@ class WordSynset {
   }
 
   Future<String> getPluralForm() async {
-    if (_gotPluralForm) {
+    if (!_gotPluralForm) {
       _pluralForm =
           await dataManager.getPluralForm(word.wordId, synset.synsetId);
       _gotPluralForm = true;
@@ -57,8 +57,8 @@ class WordSynset {
     return _pluralForm;
   }
 
-  Future<List<Word>> getOpposites() async {
-    if (_gotOpposites) {
+  Future<List<String>> getOpposites() async {
+    if (!_gotOpposites) {
       _opposites = await dataManager.getOpposites(word.wordId, synset.synsetId);
       _gotOpposites = true;
     }

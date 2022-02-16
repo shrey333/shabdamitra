@@ -48,7 +48,10 @@ class _WordListsState extends State<WordLists> {
                     ),
                     title: Text(words[index].word),
                     onTap: () {
-                      Get.to(() => WordDisplay(word: words[index]));
+                      Get.to(() => WordDisplay(
+                            word: words[index],
+                            index: 0,
+                          ));
                     },
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 5),

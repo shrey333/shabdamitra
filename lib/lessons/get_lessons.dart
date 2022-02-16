@@ -56,28 +56,28 @@ class _GetLessonsState extends State<GetLessons> {
                 "Lesson ${lessons[index].lessonId}",
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Row(
-                children: <Widget>[
-                  SizedBox(
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(6),
-                      ),
-                      child: LinearProgressIndicator(
-                        valueColor:
-                            const AlwaysStoppedAnimation<Color>(Colors.green),
-                        backgroundColor: const Color(0xffD6D6D6),
-                        value: _val,
-                      ),
-                    ),
-                    width: 30,
-                    height: 5,
-                  ),
-                  _val < 1
-                      ? Text(' Progress $_per%')
-                      : const Text(' Completed 100%')
-                ],
-              ),
+              // subtitle: Row(
+              //   children: <Widget>[
+              //     SizedBox(
+              //       child: ClipRRect(
+              //         borderRadius: const BorderRadius.all(
+              //           Radius.circular(6),
+              //         ),
+              //         child: LinearProgressIndicator(
+              //           valueColor:
+              //               const AlwaysStoppedAnimation<Color>(Colors.green),
+              //           backgroundColor: const Color(0xffD6D6D6),
+              //           value: _val,
+              //         ),
+              //       ),
+              //       width: 30,
+              //       height: 5,
+              //     ),
+              //     _val < 1
+              //         ? Text(' Progress $_per%')
+              //         : const Text(' Completed 100%')
+              //   ],
+              // ),
               trailing: const Icon(
                 Icons.arrow_forward_ios,
               ),

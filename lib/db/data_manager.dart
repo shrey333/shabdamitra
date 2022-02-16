@@ -70,6 +70,9 @@ class DataManager {
     for (var conceptDefinition in conceptDefinitions) {
       var examples =
           await _dbManager.getExamples(conceptDefinition['synset_id'] as int);
+      examples = [
+        ...{...examples}
+      ];
       synsets.add(Synset(
           dataManager: this,
           synsetId: conceptDefinition['synset_id'] as int,
@@ -95,12 +98,7 @@ class DataManager {
     return _dbManager.getPluralForm(wordId, synsetId);
   }
 
-  Future<List<Word>> getOpposites(int wordId, int synsetId) async {
-    var opposites = await _dbManager.getOpposites(wordId, synsetId);
-    var oppositeWords = <Word>[];
-    for (var opposite in opposites) {
-      oppositeWords.add(await getWord(opposite));
-    }
-    return oppositeWords;
+  Future<List<String>> getOpposites(int wordId, int synsetId) async {
+    return await _dbManager.getOpposites(wordId, synsetId);
   }
 }

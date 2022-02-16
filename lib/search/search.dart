@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:shabdamitra/db/data_manager.dart';
+import 'package:shabdamitra/db/word_synset.dart';
+import 'package:shabdamitra/word/word_display.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);
@@ -9,23 +14,32 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
+  List<WordSynset> wordSynsets = <WordSynset>[];
+
   @override
   Widget build(BuildContext context) {
+    DataManager dataManager = DataManager();
     return SafeArea(
       child: FloatingSearchBar(
         body: FloatingSearchBarScrollNotifier(
           child: ListView.builder(
             padding: const EdgeInsets.only(top: 60),
-            itemCount: 50,
+            itemCount: wordSynsets.length,
             itemBuilder: (context, index) {
               return ListTile(
-                leading: const CircleAvatar(
+                leading: CircleAvatar(
                   backgroundColor: Colors.blue,
                   child: Center(
-                    child: Text('I'),
+                    child: Text(wordSynsets[index].word.word[0]),
                   ),
                 ),
-                title: Text('Item $index'),
+                title: Text(wordSynsets[index].word.word),
+                onTap: () {
+                  Get.to(() => WordDisplay(
+                        word: wordSynsets[index].word,
+                        index: index,
+                      ));
+                },
               );
             },
           ),
@@ -39,7 +53,19 @@ class _SearchState extends State<Search> {
         openAxisAlignment: 0.0,
         width: 600,
         debounceDelay: const Duration(milliseconds: 400),
-        onQueryChanged: (query) {},
+        onQueryChanged: (query) {
+          dataManager.getWord(query).then((word) {
+            word.getWordSynsets().then((_wordSynsets) async {
+              List<WordSynset> ws = <WordSynset>[];
+              for (var wordSynsetFut in _wordSynsets) {
+                ws.add(await wordSynsetFut);
+              }
+              setState(() {
+                wordSynsets = ws;
+              });
+            });
+          });
+        },
         transition: CircularFloatingSearchBarTransition(),
         actions: [
           FloatingSearchBarAction(
@@ -54,21 +80,21 @@ class _SearchState extends State<Search> {
           ),
         ],
         builder: (context, transition) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Material(
-              color: Colors.white,
-              elevation: 4.0,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: Colors.accents.map(
-                  (color) {
-                    return Container(height: 50, color: color);
-                  },
-                ).toList(),
-              ),
-            ),
-          );
+          // return ClipRRect(
+          //   borderRadius: BorderRadius.circular(8),
+          //   // child: Material(
+          //   //   color: Colors.white,
+          //   //   elevation: 4.0,
+          //   // child: Column(
+          //   //   mainAxisSize: MainAxisSize.min,
+          //   //   children: Colors.accents.map(
+          //   //     (color) {
+          //   //       return Container(height: 50, color: color);
+          //   //     },
+          //   //   ).toList(),
+          //   // ),
+          // );
+          return const SizedBox.shrink();
         },
       ),
     );

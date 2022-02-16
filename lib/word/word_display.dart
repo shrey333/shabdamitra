@@ -10,43 +10,46 @@ import 'package:shabdamitra/word/image_display.dart';
 
 class WordDisplay extends StatefulWidget {
   final Word word;
-  const WordDisplay({Key? key, required this.word}) : super(key: key);
+  final int index;
+  const WordDisplay({Key? key, required this.word, required this.index})
+      : super(key: key);
 
   @override
   // ignore: no_logic_in_create_state
-  _WordDisplayState createState() => _WordDisplayState(word);
+  _WordDisplayState createState() => _WordDisplayState(word, index);
 }
 
 class _WordDisplayState extends State<WordDisplay> {
   final Word word;
+  final int index;
   List<WordSynset> wordSynsets = <WordSynset>[];
-  // List<Word> synonyms = <Word>[];
-  // List<Word> opposites = <Word>[];
-  // String pluralForm = '';
+  List<Word> synonyms = <Word>[];
+  List<String> opposites = <String>[];
+  String pluralForm = '';
   final height = Get.height;
   final player = AudioPlayer();
 
-  _WordDisplayState(this.word) {
+  _WordDisplayState(this.word, this.index) {
     word.getWordSynsets().then((wordSynsetsFut) {
-      wordSynsetsFut[0].then((value) => setState(() {
-            wordSynsets.add(value);
-          }));
+      wordSynsetsFut[index].then((wordSynset) {
+        wordSynset.getPluralForm().then((_pluralForm) {
+          wordSynset.getSynonyms().then((_synonyms) {
+            wordSynset.getOpposites().then((_opposites) {
+              setState(() {
+                wordSynsets.add(wordSynset);
+                pluralForm = _pluralForm;
+                synonyms = _synonyms;
+                opposites = _opposites;
+              });
+            });
+          });
+        });
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // if (wordSynsets.isNotEmpty) {
-    //   wordSynsets[0].getPluralForm().then((value) => setState(() {
-    //         pluralForm = value;
-    //       }));
-    //   wordSynsets[0].getSynonyms().then((value) => setState(() {
-    //         synonyms = value;
-    //       }));
-    //   wordSynsets[0].getOpposites().then((value) => setState(() {
-    //         opposites = value;
-    //       }));
-    // }
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -88,40 +91,47 @@ class _WordDisplayState extends State<WordDisplay> {
                     ),
                     ListTile(
                       title: const Text('वाक्य में प्रयोग'),
-                      subtitle: Row(
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: wordSynsets[0]
                             .synset
                             .examples
-                            .map((example) => Text(example))
+                            .map((example) => Text(
+                                  example,
+                                  textAlign: TextAlign.left,
+                                ))
                             .toList(),
                       ),
                     ),
-                    // ListTile(
-                    //   title: const Text('बहुवचन'),
-                    //   subtitle: Text(pluralForm),
-                    // ),
-                    // ListTile(
-                    //   title: const Text("समानार्थी शब्द"),
-                    //   subtitle: Row(
-                    //     children: synonyms.map((synonym) {
-                    //       return ActionChip(
-                    //           label: Text(synonym.word), onPressed: () {});
-                    //     }).toList(),
-                    //   ),
-                    // ),
+                    if (pluralForm != '')
+                      ListTile(
+                        title: const Text('बहुवचन'),
+                        subtitle: Text(pluralForm),
+                      ),
                     ListTile(
                       title: const Text("लिंग"),
                       subtitle: Text(genderToString(wordSynsets[0].gender)),
                     ),
-                    // ListTile(
-                    //   title: const Text("विलोम शब्द"),
-                    //   subtitle: Row(
-                    //     children: opposites.map((opposite) {
-                    //       return ActionChip(
-                    //           label: Text(opposite.word), onPressed: () {});
-                    //     }).toList(),
-                    //   ),
-                    // ),
+                    if (synonyms.isNotEmpty)
+                      ListTile(
+                        title: const Text("समानार्थी शब्द"),
+                        subtitle: Wrap(
+                          children: synonyms.map((synonym) {
+                            return ActionChip(
+                                label: Text(synonym.word), onPressed: () {});
+                          }).toList(),
+                        ),
+                      ),
+                    if (opposites.isNotEmpty)
+                      ListTile(
+                        title: const Text("विलोम शब्द"),
+                        subtitle: Wrap(
+                          children: opposites.map((opposite) {
+                            return ActionChip(
+                                label: Text(opposite), onPressed: () {});
+                          }).toList(),
+                        ),
+                      ),
                   ],
                 ),
               ),

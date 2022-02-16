@@ -112,7 +112,8 @@ class DbManager {
     await _dbFuture;
     return _db.rawQuery(
         'SELECT DISTINCT lesson_id FROM tcp_word_collection '
-        'WHERE board = ? AND class_id = ? ',
+        'WHERE board = ? AND class_id = ? '
+        'ORDER BY lesson_id ',
         [board, standard + 1]).then((list) {
       return list.map((map) => map['lesson_id'] as int).toList();
     });
@@ -166,7 +167,7 @@ class DbManager {
 
   Future<List<String>> getOpposites(int wordId, int synsetId) async {
     await _dbFuture;
-    var pluralForm = (await _db.rawQuery(
+    var opposites = (await _db.rawQuery(
         'WITH synset_word_id(swi) AS ( '
         'SELECT synset_word_id '
         'FROM tcp_synset_words '
@@ -174,12 +175,12 @@ class DbManager {
         ') SELECT opposite '
         'FROM tcp_word_properties INNER JOIN synset_word_id '
         'ON synset_word_id.swi = tcp_word_properties.synset_word_id '
-        'WHERE tcp_word_properties.number != ""',
+        'WHERE tcp_word_properties.opposite != \'\'',
         [synsetId, wordId]));
-    if (pluralForm.isEmpty) {
+    if (opposites.isEmpty) {
       return List.empty();
     } else {
-      return (pluralForm[0]['number'] as String).split(',');
+      return (opposites[0]['opposite'] as String).split(',');
     }
   }
 
