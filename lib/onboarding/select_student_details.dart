@@ -2,9 +2,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:shabdamitra/choices.dart';
+import 'package:shabdamitra/application_context.dart';
 import 'package:shabdamitra/homepage.dart';
+import 'package:shabdamitra/util/user_property.dart';
 
 class SelectStudentDetails extends StatefulWidget {
   const SelectStudentDetails({Key? key}) : super(key: key);
@@ -14,18 +14,24 @@ class SelectStudentDetails extends StatefulWidget {
 }
 
 class _SelectStudentDetailsState extends State<SelectStudentDetails> {
-  final ClassForReference _userClass = ClassForReference(0),
-      _userBoard = ClassForReference(0);
-  final GetStorage _storage = GetStorage();
+  int studentBoardIndex = ApplicationContext.defaultStudentBoardIndex;
+  int studentStandardIndex = ApplicationContext.defaultStudentStandardIndex;
 
-  void showPicker(
-    BuildContext _context,
-    List<String> _list,
-    ClassForReference _intialIndex,
-    String _title,
-    int _dataType,
-  ) {
-    int _selectedIndex = _intialIndex.value;
+  void showPicker(BuildContext _context, UserProperty studentProperty) {
+    String title;
+    List<dynamic> propertyValues;
+    int propertyValueIndex;
+    if (studentProperty == UserProperty.studentBoard) {
+      title = "Student Board";
+      propertyValues = ApplicationContext.StudentBoards;
+      propertyValueIndex = studentBoardIndex;
+    } else {
+      title = "Student Standard";
+      propertyValues = ApplicationContext
+          .StudentBoardsAndStandards[ApplicationContext.StudentBoards[studentBoardIndex]]!;
+      propertyValueIndex = studentStandardIndex;
+    }
+
     showCupertinoModalPopup(
       context: _context,
       builder: (context) {
@@ -58,7 +64,7 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                       ),
                     ),
                     Text(
-                      _title,
+                      title,
                       style: const TextStyle(
                         fontSize: 18.0,
                       ),
@@ -68,10 +74,13 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                       onPressed: () {
                         setState(
                           () {
-                            if (_dataType == 0) {
-                              _userClass.value = 0;
+                            if (studentProperty == UserProperty.studentBoard) {
+                              studentBoardIndex = propertyValueIndex;
+                            } else {
+                              studentStandardIndex = propertyValueIndex;
                             }
-                            _intialIndex.value = _selectedIndex;
+                            ApplicationContext().setUserTypeStudent(
+                                studentBoardIndex, studentStandardIndex);
                           },
                         );
                         Get.back();
@@ -88,22 +97,22 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                 height: Get.height * 0.4,
                 color: const Color(0xfff7f7f7),
                 child: CupertinoPicker(
-                  scrollController:
-                      FixedExtentScrollController(initialItem: _selectedIndex),
+                  scrollController: FixedExtentScrollController(
+                      initialItem: propertyValueIndex),
                   magnification: 1.2,
                   itemExtent: 40.0,
                   onSelectedItemChanged: (int index) {
                     setState(
                       () {
-                        _selectedIndex = index;
+                        propertyValueIndex = index;
                       },
                     );
                   },
-                  children: _list.map(
-                    (String value) {
+                  children: propertyValues.map(
+                    (value) {
                       return Center(
                         child: Text(
-                          value,
+                          value.toString(),
                           style: const TextStyle(
                             fontSize: 16.0,
                             color: Color(0xff333333),
@@ -119,14 +128,6 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
         );
       },
     );
-  }
-
-  void _onFinish() {
-    _storage.write('userProficiency', 0);
-    _storage.write('userBoard', _userBoard.value);
-    _storage.write('userClass', _userClass.value);
-    _storage.write('onboardingDone', true);
-    Get.offAll(() => const HomePage());
   }
 
   @override
@@ -195,15 +196,13 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                       child: Center(
                         child: ListTile(
                           title: const Text("User Board"),
-                          subtitle: Text(userBoardList[_userBoard.value]),
+                          subtitle:
+                              Text(ApplicationContext.getDefaultStudentBoard()),
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: () {
                             showPicker(
                               context,
-                              userBoardList,
-                              _userBoard,
-                              "User Board",
-                              0,
+                              UserProperty.studentBoard,
                             );
                           },
                         ),
@@ -225,17 +224,11 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                       child: Center(
                         child: ListTile(
                           title: const Text("User Class"),
-                          subtitle: Text(userClassList[_userBoard.value]
-                              [_userClass.value]),
+                          subtitle: Text(ApplicationContext
+                              .getDefaultStudentStandardString()),
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: () {
-                            showPicker(
-                              context,
-                              userClassList[_userBoard.value],
-                              _userClass,
-                              "User Class",
-                              1,
-                            );
+                            showPicker(context, UserProperty.studentStandard);
                           },
                         ),
                       ),
@@ -249,7 +242,11 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
-                    onPressed: _onFinish,
+                    onPressed: () {
+                      ApplicationContext().setUserTypeStudent(
+                          studentBoardIndex, studentStandardIndex);
+                      Get.offAll(() => const HomePage());
+                    },
                     child: const AutoSizeText(
                       ' F I N I S H !',
                       maxLines: 1,

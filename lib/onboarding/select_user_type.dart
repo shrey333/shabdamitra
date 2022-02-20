@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:shabdamitra/onboarding/select_proficiency.dart';
 import 'package:shabdamitra/onboarding/select_student_details.dart';
 
@@ -14,7 +13,6 @@ class SelectUserType extends StatefulWidget {
 
 class _SelectUserTypeState extends State<SelectUserType> {
   int _selectedIndex = 0;
-  final GetStorage _storage = GetStorage();
 
   List<String> images = [
     " ",
@@ -90,7 +88,6 @@ class _SelectUserTypeState extends State<SelectUserType> {
         ),
       );
     } else {
-      _storage.write('userType', _selectedIndex - 1);
       if (_selectedIndex == 1) {
         Get.to(() => const SelectStudentDetails());
       } else if (_selectedIndex == 2) {

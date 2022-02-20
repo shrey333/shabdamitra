@@ -1,11 +1,11 @@
-import 'package:shabdamitra/db/data_manager.dart';
+import 'package:shabdamitra/application_context.dart';
 import 'package:shabdamitra/db/word.dart';
 
 class Lesson {
-  DataManager dataManager;
   int lessonId;
 
-  Lesson({required this.dataManager, required this.lessonId});
+  Lesson({required this.lessonId});
 
-  Future<List<Word>> get words async => dataManager.getLessonWords(lessonId);
+  Future<List<Word>> get words async =>
+      ApplicationContext().dataManager.getLessonWords(lessonId);
 }

@@ -77,12 +77,10 @@ class DbManager {
   Future<List<Map<String, Object?>>> getExamples(int synsetId) async {
     await _dbFuture;
     return _db.rawQuery(
-        'SELECT example_content FROM tcp_synset_example '
-        'WHERE synset_id = ? AND example_content IS NOT NULL '
-        'UNION '
-        'SELECT simplified_example FROM tcp_synset_example '
-        'WHERE synset_id = ? AND simplified_example IS NOT NULL',
-        [synsetId, synsetId]);
+        'SELECT example_content, simplified_example '
+        'FROM tcp_synset_example '
+        'WHERE synset_id = ? ',
+        [synsetId]);
   }
 
   Future<List<Map<String, Object?>>> getSynsetsForBoardAndStandard(
@@ -93,7 +91,7 @@ class DbManager {
         'SELECT DISTINCT synset_id '
         'FROM tcp_word_collection '
         'WHERE word_id = ? AND board = ? AND class_id = ? '
-        ') SELECT synset_id, concept_definition '
+        ') SELECT synset_id, concept_definition, simplified_gloss '
         'FROM synset_id INNER JOIN tcp_synset '
         'ON synset_id.si = tcp_synset.synset_id ',
         [wordId, board, standard]);
@@ -112,7 +110,7 @@ class DbManager {
     await _dbFuture;
     return _db.rawQuery(
         'SELECT DISTINCT lesson_id FROM tcp_word_collection '
-        'WHERE board = ? AND class_id = ? '
+        'WHERE board = ? AND class_id = ? AND lesson_id > 0 '
         'ORDER BY lesson_id ',
         [board, standard + 1]).then((list) {
       return list.map((map) => map['lesson_id'] as int).toList();
@@ -156,7 +154,7 @@ class DbManager {
         ') SELECT number '
         'FROM tcp_word_properties INNER JOIN synset_word_id '
         'ON synset_word_id.swi = tcp_word_properties.synset_word_id '
-        'WHERE tcp_word_properties.number != ""',
+        'WHERE tcp_word_properties.number != "" ',
         [synsetId, wordId]));
     if (pluralForm.isEmpty) {
       return '';
@@ -165,23 +163,184 @@ class DbManager {
     }
   }
 
-  Future<List<String>> getOpposites(int wordId, int synsetId) async {
+  Future<List<Map<String, Object?>>> getAntonyms(
+      int wordId, int synsetId) async {
     await _dbFuture;
-    var opposites = (await _db.rawQuery(
+    return await _db.rawQuery(
+        'SELECT anto_synset_id AS synset_id, anto_word_id AS word_id '
+        'FROM tcp_rel_antonymy '
+        'WHERE synset_id = ? AND word_id = ? ',
+        [synsetId, wordId]);
+  }
+
+  Future<String> getSynsetConceptDefinition(int synsetId) async {
+    await _dbFuture;
+    return (await _db.rawQuery(
+        'SELECT concept_definition '
+        'FROM tcp_synset '
+        'WHERE synset_id = ? ',
+        [synsetId]))[0]['concept_definition'] as String;
+  }
+
+  Future<String> getPOS(int wordId, int synsetId) async {
+    await _dbFuture;
+    var cols = (await _db.rawQuery(
         'WITH synset_word_id(swi) AS ( '
         'SELECT synset_word_id '
         'FROM tcp_synset_words '
         'WHERE synset_id = ? AND word_id = ? '
-        ') SELECT opposite '
+        ') '
+        'SELECT kind_of_noun, verb_category, kind_of_adjective, kind_of_adverb '
         'FROM tcp_word_properties INNER JOIN synset_word_id '
-        'ON synset_word_id.swi = tcp_word_properties.synset_word_id '
-        'WHERE tcp_word_properties.opposite != \'\'',
-        [synsetId, wordId]));
-    if (opposites.isEmpty) {
-      return List.empty();
+        'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
+        [synsetId, wordId]))[0];
+    if (_checkColsForPOS(cols, 'kind_of_noun')) {
+      return cols['kind_of_noun'] as String;
+    } else if (_checkColsForPOS(cols, 'verb_category')) {
+      return cols['verb_category'] as String;
+    } else if (_checkColsForPOS(cols, 'kind_of_adjective')) {
+      return cols['kind_of_adjective'] as String;
+    } else if (_checkColsForPOS(cols, 'kind_of_adverb')) {
+      return cols['kind_of_adverb'] as String;
     } else {
-      return (opposites[0]['opposite'] as String).split(',');
+      return '';
     }
+  }
+
+  bool _checkColsForPOS(Map<String, Object?> cols, String col) {
+    return (cols[col] != null) && (cols[col] as String != '');
+  }
+
+  Future<String> getCountability(int wordId, int synsetId) async {
+    await _dbFuture;
+    return (await _db.rawQuery(
+        'WITH synset_word_id(swi) AS ( '
+        'SELECT synset_word_id '
+        'FROM tcp_synset_words '
+        'WHERE synset_id = ? AND word_id = ? '
+        ') SELECT countability '
+        'FROM tcp_word_properties INNER JOIN synset_word_id '
+        'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
+        [synsetId, wordId]))[0]['countability'] as String;
+  }
+
+  Future<Map<String, Object?>> getAffix(int wordId, int synsetId) async {
+    await _dbFuture;
+    return (await _db.rawQuery(
+        'WITH synset_word_id(swi) AS ( '
+        'SELECT synset_word_id '
+        'FROM tcp_synset_words '
+        'WHERE synset_id = ? AND word_id = ? '
+        ') SELECT prefix_word, root_word, suffix_word '
+        'FROM tcp_word_properties INNER JOIN synset_word_id '
+        'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
+        [synsetId, wordId]))[0];
+  }
+
+  Future<String> getJunction(int wordId, int synsetId) async {
+    await _dbFuture;
+    return (await _db.rawQuery(
+        'WITH synset_word_id(swi) AS ( '
+        'SELECT synset_word_id '
+        'FROM tcp_synset_words '
+        'WHERE synset_id = ? AND word_id = ? '
+        ') SELECT sandhi '
+        'FROM tcp_word_properties INNER JOIN synset_word_id '
+        'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
+        [synsetId, wordId]))[0]['sandhi'] as String;
+  }
+
+  Future<String> getTransitivity(int wordId, int synsetId) async {
+    await _dbFuture;
+    return (await _db.rawQuery(
+        'WITH synset_word_id(swi) AS ( '
+        'SELECT synset_word_id '
+        'FROM tcp_synset_words '
+        'WHERE synset_id = ? AND word_id = ? '
+        ') SELECT transitivity '
+        'FROM tcp_word_properties INNER JOIN synset_word_id '
+        'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
+        [synsetId, wordId]))[0]['transitivity'] as String;
+  }
+
+  Future<String> getIndeclinable(int wordId, int synsetId) async {
+    await _dbFuture;
+    return (await _db.rawQuery(
+        'WITH synset_word_id(swi) AS ( '
+        'SELECT synset_word_id '
+        'FROM tcp_synset_words '
+        'WHERE synset_id = ? AND word_id = ? '
+        ') SELECT indeclinable '
+        'FROM tcp_word_properties INNER JOIN synset_word_id '
+        'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
+        [synsetId, wordId]))[0]['transitivity'] as String;
+  }
+
+  Future<List<Map<String, Object?>>> getHypernyms(int synsetId) async {
+    await _dbFuture;
+    return await _db.rawQuery(
+        'SELECT child_synset_id '
+        'FROM tcp_master_rel_hypernymy_hyponymy '
+        'WHERE parent_synset_id = ? ',
+        [synsetId]);
+  }
+
+  Future<List<Map<String, Object?>>> getHyponyms(int synsetId) async {
+    await _dbFuture;
+    return await _db.rawQuery(
+        'SELECT parent_synset_id '
+        'FROM tcp_master_rel_hypernymy_hyponymy '
+        'WHERE child_synset_id = ? ',
+        [synsetId]);
+  }
+
+  Future<List<Map<String, Object?>>> getMeronyms(int synsetId) async {
+    await _dbFuture;
+    return await _db.rawQuery(
+        'SELECT part_synset_id '
+        'FROM tcp_master_rel_meronymy_holonymy '
+        'WHERE whole_synset_id = ? ',
+        [synsetId]);
+  }
+
+  Future<List<Map<String, Object?>>> getHolonyms(int synsetId) async {
+    await _dbFuture;
+    return await _db.rawQuery(
+        'SELECT whole_synset_id '
+        'FROM tcp_master_rel_meronymy_holonymy '
+        'WHERE part_synset_id = ? ',
+        [synsetId]);
+  }
+
+  Future<List<Map<String, Object?>>> getModifiesVerb(int synsetId) async {
+    await _dbFuture;
+    return await _db.rawQuery(
+        'SELECT verb_synset_id '
+        'FROM tcp_master_rel_adverb_modifies_verb '
+        'WHERE adverb_synset_id = ? ',
+        [synsetId]);
+  }
+
+  Future<List<Map<String, Object?>>> getModifiesNoun(int synsetId) async {
+    await _dbFuture;
+    return await _db.rawQuery(
+        'SELECT noun_synset_id '
+        'FROM tcp_master_rel_adjective_modifies_noun '
+        'WHERE adjective_synset_id = ? ',
+        [synsetId]);
+  }
+
+  Future<List<int>> getWordIdsForSynsetId(int synsetId, int limit) async {
+    await _dbFuture;
+    return (await _db.rawQuery(
+            'SELECT word_id '
+            'FROM tcp_synset_words '
+            'WHERE synset_id = ? '
+            'ORDER BY word_order '
+            'LIMIT ? ',
+            [synsetId, limit]))
+        .map((map) => map['word_id'] as int)
+        .toList();
   }
 
   Future<void> ensureDbConnectionClosed() async {

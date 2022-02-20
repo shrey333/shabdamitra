@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:shabdamitra/choices.dart';
+import 'package:shabdamitra/application_context.dart';
+import 'package:shabdamitra/util/user_property.dart';
 
 class StudentSettings extends StatefulWidget {
   const StudentSettings({Key? key}) : super(key: key);
@@ -13,30 +13,25 @@ class StudentSettings extends StatefulWidget {
 }
 
 class _StudentSettingsState extends State<StudentSettings> {
-  final ClassForReference _userClass = ClassForReference(0),
-      _userBoard = ClassForReference(0);
-  final GetStorage _storage = GetStorage();
+  void showPicker(BuildContext _context, UserProperty studentProperty) {
+    int studentBoardIndex = ApplicationContext().getStudentBoardIndex();
+    int studentStandardIndex = ApplicationContext().getStudentStandardIndex();
+    String title;
+    List<String> propertyValues;
+    int propertyValueIndex;
+    if (studentProperty == UserProperty.studentBoard) {
+      title = "Student Board";
+      propertyValues = ApplicationContext.StudentBoards;
+      propertyValueIndex = studentBoardIndex;
+    } else {
+      title = "Student Standard";
+      propertyValues = ApplicationContext
+          .StudentBoardsAndStandards[ApplicationContext().getStudentBoard()]!
+          .map((standard) => ApplicationContext.toStandardString(standard))
+          .toList();
+      propertyValueIndex = studentStandardIndex;
+    }
 
-  @override
-  void initState() {
-    super.initState();
-    _userBoard.value = _storage.read("userBoard") ?? 0;
-    _userClass.value = _storage.read("userClass") ?? 0;
-  }
-
-  void _saveToLocal() {
-    _storage.write("userBoard", _userBoard.value);
-    _storage.write("userClass", _userClass.value);
-  }
-
-  void showPicker(
-    BuildContext _context,
-    List<String> _list,
-    ClassForReference _intialIndex,
-    String _title,
-    int _dataType,
-  ) {
-    int _selectedIndex = _intialIndex.value;
     showCupertinoModalPopup(
       context: _context,
       builder: (context) {
@@ -69,7 +64,7 @@ class _StudentSettingsState extends State<StudentSettings> {
                       ),
                     ),
                     Text(
-                      _title,
+                      title,
                       style: const TextStyle(
                         fontSize: 18.0,
                       ),
@@ -79,13 +74,15 @@ class _StudentSettingsState extends State<StudentSettings> {
                       onPressed: () {
                         setState(
                           () {
-                            if (_dataType == 0) {
-                              _userClass.value = 0;
+                            if (studentProperty == UserProperty.studentBoard) {
+                              studentBoardIndex = propertyValueIndex;
+                            } else {
+                              studentStandardIndex = propertyValueIndex;
                             }
-                            _intialIndex.value = _selectedIndex;
+                            ApplicationContext().setUserTypeStudent(
+                                studentBoardIndex, studentStandardIndex);
                           },
                         );
-                        _saveToLocal();
                         Get.back();
                       },
                       padding: const EdgeInsets.symmetric(
@@ -100,18 +97,18 @@ class _StudentSettingsState extends State<StudentSettings> {
                 height: Get.height * 0.4,
                 color: const Color(0xfff7f7f7),
                 child: CupertinoPicker(
-                  scrollController:
-                      FixedExtentScrollController(initialItem: _selectedIndex),
+                  scrollController: FixedExtentScrollController(
+                      initialItem: propertyValueIndex),
                   magnification: 1.2,
                   itemExtent: 40.0,
                   onSelectedItemChanged: (int index) {
                     setState(
                       () {
-                        _selectedIndex = index;
+                        propertyValueIndex = index;
                       },
                     );
                   },
-                  children: _list.map(
+                  children: propertyValues.map(
                     (String value) {
                       return Center(
                         child: Text(
@@ -148,16 +145,13 @@ class _StudentSettingsState extends State<StudentSettings> {
                 CustomSettingsTile(
                   child: Center(
                     child: ListTile(
-                      title: const Text("User Board"),
-                      subtitle: Text(userBoardList[_userBoard.value]),
+                      title: const Text("Student Board"),
+                      subtitle: Text(ApplicationContext().getStudentBoard()),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         showPicker(
                           context,
-                          userBoardList,
-                          _userBoard,
-                          "User Board",
-                          0,
+                          UserProperty.studentBoard,
                         );
                       },
                     ),
@@ -166,17 +160,14 @@ class _StudentSettingsState extends State<StudentSettings> {
                 CustomSettingsTile(
                   child: Center(
                     child: ListTile(
-                      title: const Text("User Class"),
+                      title: const Text("Student Standard"),
                       subtitle: Text(
-                          userClassList[_userBoard.value][_userClass.value]),
+                          ApplicationContext().getStudentStandard().toString()),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         showPicker(
                           context,
-                          userClassList[_userBoard.value],
-                          _userClass,
-                          "User Class",
-                          1,
+                          UserProperty.studentStandard,
                         );
                       },
                     ),

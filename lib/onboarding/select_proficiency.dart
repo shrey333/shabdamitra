@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:shabdamitra/application_context.dart';
 import 'package:shabdamitra/homepage.dart';
 
 class SelectProficiency extends StatefulWidget {
@@ -13,7 +13,6 @@ class SelectProficiency extends StatefulWidget {
 
 class _SelectProficiencyState extends State<SelectProficiency> {
   int _selectedIndex = 0;
-  final GetStorage _storage = GetStorage();
 
   Widget customRadio(String text, int index) {
     return Container(
@@ -72,9 +71,7 @@ class _SelectProficiencyState extends State<SelectProficiency> {
         ),
       );
     } else {
-      _storage.write('userProficiency', _selectedIndex - 1);
-      _storage.write('userBoard', 0);
-      _storage.write('userClass', 0);
+      ApplicationContext().setUserTypeLearner(_selectedIndex);
       Get.offAll(() => const HomePage());
     }
   }

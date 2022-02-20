@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:shabdamitra/db/gender.dart';
+import 'package:shabdamitra/application_context.dart';
+import 'package:shabdamitra/db/enums.dart';
 import 'package:shabdamitra/db/word.dart';
 import 'package:shabdamitra/db/word_synset.dart';
-import 'package:shabdamitra/word/image_display.dart';
 
 class WordDisplay extends StatefulWidget {
   final Word word;
@@ -16,33 +15,100 @@ class WordDisplay extends StatefulWidget {
 
   @override
   // ignore: no_logic_in_create_state
-  _WordDisplayState createState() => _WordDisplayState(word, index);
+  _WordDisplayState createState() => _WordDisplayState();
 }
 
 class _WordDisplayState extends State<WordDisplay> {
-  final Word word;
-  final int index;
   List<WordSynset> wordSynsets = <WordSynset>[];
-  List<Word> synonyms = <Word>[];
-  List<String> opposites = <String>[];
+  List<WordSynset> synonyms = <WordSynset>[];
+  List<WordSynset> antonyms = <WordSynset>[];
   String pluralForm = '';
+  Gender gender = Gender.unknown;
+  Affix affix = Affix();
+  Countability countability = Countability.unspecified;
+  Transitivity transitivity = Transitivity.unspecified;
+  Indeclinable indeclinable = Indeclinable.unspecified;
+  Junction junction = Junction.unspecified;
+  PartOfSpeechWithSubtype posWithSubtype = PartOfSpeechWithSubtype('');
+  List<WordSynset> holonyms = <WordSynset>[];
+  List<WordSynset> hypernyms = <WordSynset>[];
+  List<WordSynset> hyponyms = <WordSynset>[];
+  List<WordSynset> meronyms = <WordSynset>[];
+  List<WordSynset> modifiesVerb = <WordSynset>[];
+  List<WordSynset> modifiesNoun = <WordSynset>[];
+
   final height = Get.height;
   final player = AudioPlayer();
 
-  _WordDisplayState(this.word, this.index) {
-    word.getWordSynsets().then((wordSynsetsFut) {
-      wordSynsetsFut[index].then((wordSynset) {
-        wordSynset.getPluralForm().then((_pluralForm) {
-          wordSynset.getSynonyms().then((_synonyms) {
-            wordSynset.getOpposites().then((_opposites) {
-              setState(() {
-                wordSynsets.add(wordSynset);
-                pluralForm = _pluralForm;
-                synonyms = _synonyms;
-                opposites = _opposites;
-              });
-            });
-          });
+  _WordDisplayState() {
+    widget.word.getWordSynsets().then((wordSynsets) {
+      WordSynset wordSynset = wordSynsets[widget.index];
+      List<Future> futures = <Future>[];
+      if (ApplicationContext().showPluralForm()) {
+        futures.add(wordSynset.getPluralForm());
+      }
+      futures.add(wordSynset.getSynonyms());
+      futures.add(wordSynset.getAntonyms());
+      if (ApplicationContext().showGender()) {
+        futures.add(wordSynset.getGender());
+      }
+      if (ApplicationContext().showAffix()) {
+        futures.add(wordSynset.getAffix());
+      }
+      if (ApplicationContext().showCountability()) {
+        futures.add(wordSynset.getCountability());
+      }
+      if (ApplicationContext().showTransitivity()) {
+        futures.add(wordSynset.getTransitivity());
+      }
+      if (ApplicationContext().showIndeclinable()) {
+        futures.add(wordSynset.getIndeclinable());
+      }
+      if (ApplicationContext().showJunction()) {
+        futures.add(wordSynset.getJunction());
+      }
+      if (ApplicationContext().showPOSKind()) {
+        futures.add(wordSynset.getPOS());
+      }
+      if (ApplicationContext().showSpellingVariation()) {
+        // TODO: Get Different Spelling
+      }
+      if (ApplicationContext().showHolonyms()) {
+        futures.add(wordSynset.getHolonyms());
+      }
+      if (ApplicationContext().showHypernyms()) {
+        futures.add(wordSynset.getHypernyms());
+      }
+      if (ApplicationContext().showHyponyms()) {
+        futures.add(wordSynset.getHyponyms());
+      }
+      if (ApplicationContext().showMeronyms()) {
+        futures.add(wordSynset.getMeronyms());
+      }
+      if (ApplicationContext().showModifiesVerb()) {
+        futures.add(wordSynset.getModifiesVerb());
+      }
+      if (ApplicationContext().showModifiesNoun()) {
+        futures.add(wordSynset.getModifiesNoun());
+      }
+      Future.wait(futures).then((values) {
+        setState(() {
+          pluralForm = values[0] as String;
+          synonyms = values[1] as List<WordSynset>;
+          antonyms = values[2] as List<WordSynset>;
+          gender = values[3] as Gender;
+          affix = values[4] as Affix;
+          countability = values[5] as Countability;
+          transitivity = values[6] as Transitivity;
+          indeclinable = values[7] as Indeclinable;
+          junction = values[8] as Junction;
+          posWithSubtype = values[9] as PartOfSpeechWithSubtype;
+          holonyms = values[10] as List<WordSynset>;
+          hypernyms = values[11] as List<WordSynset>;
+          hyponyms = values[12] as List<WordSynset>;
+          meronyms = values[13] as List<WordSynset>;
+          modifiesVerb = values[14] as List<WordSynset>;
+          modifiesNoun = values[15] as List<WordSynset>;
         });
       });
     });
@@ -53,7 +119,7 @@ class _WordDisplayState extends State<WordDisplay> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(word.word),
+          title: Text(widget.word.word),
           actions: [
             IconButton(
               icon: const Icon(Icons.volume_up),
@@ -74,21 +140,28 @@ class _WordDisplayState extends State<WordDisplay> {
             : Card(
                 child: ListView(
                   children: [
-                    ListTile(
-                      title: CachedNetworkImage(
-                        imageUrl: wordSynsets[0].imageURL,
-                        placeholder: (context, url) =>
-                            const Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                        fit: BoxFit.cover,
-                        height: height * 0.3,
+                    if (ApplicationContext().showIllustration())
+                      ListTile(
+                        title: CachedNetworkImage(
+                          imageUrl: wordSynsets[0].imageURL,
+                          placeholder: (context, url) =>
+                              const Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                          fit: BoxFit.cover,
+                          height: height * 0.3,
+                        ),
                       ),
-                    ),
                     ListTile(
                       title: const Text('परिभाषा'),
                       subtitle: Text(wordSynsets[0].synset.conceptDefinition),
                     ),
+                    if (posWithSubtype.part != PartOfSpeech.unspecificed)
+                      ListTile(
+                        title: const Text('शब्दभेद'),
+                        subtitle:
+                            Text(partOfSpeechToString(posWithSubtype.part)),
+                      ),
                     ListTile(
                       title: const Text('वाक्य में प्रयोग'),
                       subtitle: Column(
@@ -103,32 +176,152 @@ class _WordDisplayState extends State<WordDisplay> {
                             .toList(),
                       ),
                     ),
-                    if (pluralForm != '')
+                    if (ApplicationContext().showPluralForm() &&
+                        pluralForm != '')
                       ListTile(
                         title: const Text('बहुवचन'),
                         subtitle: Text(pluralForm),
                       ),
-                    ListTile(
-                      title: const Text("लिंग"),
-                      subtitle: Text(genderToString(wordSynsets[0].gender)),
-                    ),
+                    if (ApplicationContext().showGender())
+                      ListTile(
+                        title: const Text('लिंग'),
+                        subtitle: Text(genderToString(gender)),
+                      ),
                     if (synonyms.isNotEmpty)
                       ListTile(
-                        title: const Text("समानार्थी शब्द"),
+                        title: const Text('समानार्थी शब्द'),
                         subtitle: Wrap(
                           children: synonyms.map((synonym) {
                             return ActionChip(
-                                label: Text(synonym.word), onPressed: () {});
+                                label: Text(synonym.word.word),
+                                onPressed: () {});
                           }).toList(),
                         ),
                       ),
-                    if (opposites.isNotEmpty)
+                    if (antonyms.isNotEmpty)
                       ListTile(
-                        title: const Text("विलोम शब्द"),
+                        title: const Text('विलोम शब्द'),
                         subtitle: Wrap(
-                          children: opposites.map((opposite) {
+                          children: antonyms.map((opposite) {
                             return ActionChip(
-                                label: Text(opposite), onPressed: () {});
+                                label: Text(opposite.word.word),
+                                onPressed: () {});
+                          }).toList(),
+                        ),
+                      ),
+                    if (ApplicationContext().showPOSKind() &&
+                        posWithSubtype.part != PartOfSpeech.unspecificed)
+                      ListTile(
+                        title: Text(
+                            '${partOfSpeechToString(posWithSubtype.part)} का प्रकार'),
+                        subtitle: Text(kindOfPOSToString(posWithSubtype.kind)),
+                      ),
+                    if (ApplicationContext().showAffix() &&
+                        affix.affixKind != AffixKind.unspecified) ...[
+                      ListTile(
+                        title: const Text('मूल शब्द'),
+                        subtitle: Text(affix.root),
+                      ),
+                      ListTile(
+                        title: Text(affixKindToString(affix.affixKind)),
+                        subtitle: Text(affix.affix),
+                      ),
+                    ],
+                    if (ApplicationContext().showCountability() &&
+                        countability != Countability.unspecified)
+                      ListTile(
+                        title: const Text('गणनीयता'),
+                        subtitle: Text(
+                          countabilityToString(countability),
+                        ),
+                      ),
+                    if (ApplicationContext().showJunction() &&
+                        junction != Junction.unspecified)
+                      ListTile(
+                        title: const Text('संधि'),
+                        subtitle: Text(junctionToString(junction)),
+                      ),
+                    if (ApplicationContext().showIndeclinable() &&
+                        indeclinable != Indeclinable.unspecified)
+                      ListTile(
+                        title: const Text('अव्यय'),
+                        subtitle: Text(indeclinableToString(indeclinable)),
+                      ),
+                    if (ApplicationContext().showTransitivity() &&
+                        transitivity != Transitivity.unspecified)
+                      ListTile(
+                        title: const Text('संक्रामिता'),
+                        subtitle: Text(transitivityToString(transitivity)),
+                      ),
+                    if (ApplicationContext().showHypernyms() &&
+                        hypernyms.isNotEmpty)
+                      ListTile(
+                        title: const Text('एक तरह का'),
+                        subtitle: Wrap(
+                          children: hypernyms.map((hypernym) {
+                            return ActionChip(
+                                label: Text(hypernym.word.word),
+                                onPressed: () {});
+                          }).toList(),
+                        ),
+                      ),
+                    if (ApplicationContext().showHyponyms() &&
+                        hyponyms.isNotEmpty)
+                      ListTile(
+                        title: const Text('प्रकार'),
+                        subtitle: Wrap(
+                          children: hyponyms.map((hyponym) {
+                            return ActionChip(
+                                label: Text(hyponym.word.word),
+                                onPressed: () {});
+                          }).toList(),
+                        ),
+                      ),
+                    if (ApplicationContext().showMeronyms() &&
+                        meronyms.isNotEmpty)
+                      ListTile(
+                        title: const Text('का हिस्सा'),
+                        subtitle: Wrap(
+                          children: meronyms.map((meronym) {
+                            return ActionChip(
+                                label: Text(meronym.word.word),
+                                onPressed: () {});
+                          }).toList(),
+                        ),
+                      ),
+                    if (ApplicationContext().showHolonyms() &&
+                        holonyms.isNotEmpty)
+                      ListTile(
+                        title: const Text('अंगिवाची'),
+                        subtitle: Wrap(
+                          children: holonyms.map((holonym) {
+                            return ActionChip(
+                                label: Text(holonym.word.word),
+                                onPressed: () {});
+                          }).toList(),
+                        ),
+                      ),
+                    if (ApplicationContext().showModifiesVerb() &&
+                        modifiesVerb.isNotEmpty)
+                      ListTile(
+                        title: const Text('Modifies Verb'),
+                        subtitle: Wrap(
+                          children: modifiesVerb.map((_modifiesVerb) {
+                            return ActionChip(
+                                label: Text(_modifiesVerb.word.word),
+                                onPressed: () {});
+                          }).toList(),
+                        ),
+                      ),
+                    if (ApplicationContext().showModifiesNoun() &&
+                        modifiesNoun.isNotEmpty)
+                      ListTile(
+                        title: const Text('Modifies Noun'),
+                        subtitle: Wrap(
+                          children: modifiesVerb.map((_modifiesNoun) {
+                            return ActionChip(
+                                label: Text(_modifiesNoun.word.word),
+                                onPressed: () {});
                           }).toList(),
                         ),
                       ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:shabdamitra/application_context.dart';
 import 'package:shabdamitra/settings/settings.dart';
 import 'package:shabdamitra/search/search.dart';
 import 'package:shabdamitra/lessons/lessons.dart';
@@ -12,19 +12,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 2;
-  final GetStorage _storage = GetStorage();
+  late int _selectedIndex;
 
-  @override
-  void initState() {
-    super.initState();
-    _selectedIndex = _storage.read('userType') ?? 0;
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  _HomePageState() {
+    if (ApplicationContext().isUserStudent()) {
+      _selectedIndex = 0;
+    } else {
+      _selectedIndex = 1;
+    }
   }
 
   final _listWidget = [
@@ -38,7 +33,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (index) => setState(() {
+          _selectedIndex = index;
+        }),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book),

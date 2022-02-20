@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:shabdamitra/choices.dart';
+import 'package:shabdamitra/application_context.dart';
 
 class LearnerSettings extends StatefulWidget {
   const LearnerSettings({Key? key}) : super(key: key);
@@ -13,26 +12,10 @@ class LearnerSettings extends StatefulWidget {
 }
 
 class _LearnerSettingsState extends State<LearnerSettings> {
-  final ClassForReference _userProficiency = ClassForReference(0);
-  final GetStorage _storage = GetStorage();
+  void showPicker(BuildContext _context) {
+    int propertyValueIndex = ApplicationContext().getLearnerProficiencyIndex();
+    String title = 'Learner Proficiency';
 
-  @override
-  void initState() {
-    super.initState();
-    _userProficiency.value = _storage.read("userProficiency") ?? 0;
-  }
-
-  void _saveToLocal() {
-    _storage.write("userProficiency", _userProficiency.value);
-  }
-
-  void showPicker(
-    BuildContext _context,
-    List<String> _list,
-    ClassForReference _intialIndex,
-    String _title,
-  ) {
-    int _selectedIndex = _intialIndex.value;
     showCupertinoModalPopup(
       context: _context,
       builder: (context) {
@@ -65,7 +48,7 @@ class _LearnerSettingsState extends State<LearnerSettings> {
                       ),
                     ),
                     Text(
-                      _title,
+                      title,
                       style: const TextStyle(
                         fontSize: 18.0,
                       ),
@@ -75,11 +58,10 @@ class _LearnerSettingsState extends State<LearnerSettings> {
                       onPressed: () {
                         setState(
                           () {
-                            _saveToLocal();
-                            _intialIndex.value = _selectedIndex;
+                            ApplicationContext()
+                                .setLearnerProficiencyIndex(propertyValueIndex);
                           },
                         );
-                        _saveToLocal();
                         Get.back();
                       },
                       padding: const EdgeInsets.symmetric(
@@ -94,18 +76,18 @@ class _LearnerSettingsState extends State<LearnerSettings> {
                 height: Get.height * 0.4,
                 color: const Color(0xfff7f7f7),
                 child: CupertinoPicker(
-                  scrollController:
-                      FixedExtentScrollController(initialItem: _selectedIndex),
+                  scrollController: FixedExtentScrollController(
+                      initialItem: propertyValueIndex),
                   magnification: 1.2,
                   itemExtent: 40.0,
                   onSelectedItemChanged: (int index) {
                     setState(
                       () {
-                        _selectedIndex = index;
+                        propertyValueIndex = index;
                       },
                     );
                   },
-                  children: _list.map(
+                  children: ApplicationContext.LearnerProficiencies.map(
                     (String value) {
                       return Center(
                         child: Text(
@@ -143,16 +125,12 @@ class _LearnerSettingsState extends State<LearnerSettings> {
                   child: Center(
                     child: ListTile(
                       title: const Text("User Proficiency"),
-                      subtitle: Text(
-                        userProficiencyList[_userProficiency.value],
-                      ),
+                      subtitle:
+                          Text(ApplicationContext().getLearnerProficiency()),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         showPicker(
                           context,
-                          userProficiencyList,
-                          _userProficiency,
-                          "User Proficiency",
                         );
                       },
                     ),
