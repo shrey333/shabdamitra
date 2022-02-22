@@ -15,10 +15,12 @@ class WordDisplay extends StatefulWidget {
 
   @override
   // ignore: no_logic_in_create_state
-  _WordDisplayState createState() => _WordDisplayState();
+  _WordDisplayState createState() => _WordDisplayState(word, index);
 }
 
 class _WordDisplayState extends State<WordDisplay> {
+  Word word;
+  int index;
   List<WordSynset> wordSynsets = <WordSynset>[];
   List<WordSynset> synonyms = <WordSynset>[];
   List<WordSynset> antonyms = <WordSynset>[];
@@ -40,9 +42,9 @@ class _WordDisplayState extends State<WordDisplay> {
   final height = Get.height;
   final player = AudioPlayer();
 
-  _WordDisplayState() {
-    widget.word.getWordSynsets().then((wordSynsets) {
-      WordSynset wordSynset = wordSynsets[widget.index];
+  _WordDisplayState(this.word, this.index) {
+    word.getWordSynsets().then((wordSynsets) {
+      WordSynset wordSynset = wordSynsets[index];
       List<Future> futures = <Future>[];
       if (ApplicationContext().showPluralForm()) {
         futures.add(wordSynset.getPluralForm());
@@ -93,22 +95,71 @@ class _WordDisplayState extends State<WordDisplay> {
       }
       Future.wait(futures).then((values) {
         setState(() {
-          pluralForm = values[0] as String;
-          synonyms = values[1] as List<WordSynset>;
-          antonyms = values[2] as List<WordSynset>;
-          gender = values[3] as Gender;
-          affix = values[4] as Affix;
-          countability = values[5] as Countability;
-          transitivity = values[6] as Transitivity;
-          indeclinable = values[7] as Indeclinable;
-          junction = values[8] as Junction;
-          posWithSubtype = values[9] as PartOfSpeechWithSubtype;
-          holonyms = values[10] as List<WordSynset>;
-          hypernyms = values[11] as List<WordSynset>;
-          hyponyms = values[12] as List<WordSynset>;
-          meronyms = values[13] as List<WordSynset>;
-          modifiesVerb = values[14] as List<WordSynset>;
-          modifiesNoun = values[15] as List<WordSynset>;
+          this.wordSynsets.add(wordSynset);
+          int index = 0;
+          if (ApplicationContext().showPluralForm()) {
+            pluralForm = values[index] as String;
+            index++;
+          }
+          synonyms = values[index] as List<WordSynset>;
+          index++;
+          antonyms = values[index] as List<WordSynset>;
+          index++;
+          if (ApplicationContext().showGender()) {
+            gender = values[index] as Gender;
+            index++;
+          }
+          if (ApplicationContext().showAffix()) {
+            affix = values[index] as Affix;
+            index++;
+          }
+          if (ApplicationContext().showCountability()) {
+            countability = values[index] as Countability;
+            index++;
+          }
+          if (ApplicationContext().showTransitivity()) {
+            transitivity = values[index] as Transitivity;
+            index++;
+          }
+          if (ApplicationContext().showIndeclinable()) {
+            indeclinable = values[index] as Indeclinable;
+            index++;
+          }
+          if (ApplicationContext().showJunction()) {
+            junction = values[index] as Junction;
+            index++;
+          }
+          if (ApplicationContext().showPOSKind()) {
+            posWithSubtype = values[index] as PartOfSpeechWithSubtype;
+            index++;
+          }
+          if (ApplicationContext().showSpellingVariation()) {
+            // TODO: Get Different Spelling
+          }
+          if (ApplicationContext().showHolonyms()) {
+            holonyms = values[index] as List<WordSynset>;
+            index++;
+          }
+          if (ApplicationContext().showHypernyms()) {
+            hypernyms = values[index] as List<WordSynset>;
+            index++;
+          }
+          if (ApplicationContext().showHyponyms()) {
+            hyponyms = values[index] as List<WordSynset>;
+            index++;
+          }
+          if (ApplicationContext().showMeronyms()) {
+            meronyms = values[index] as List<WordSynset>;
+            index++;
+          }
+          if (ApplicationContext().showModifiesVerb()) {
+            modifiesVerb = values[index] as List<WordSynset>;
+            index++;
+          }
+          if (ApplicationContext().showModifiesNoun()) {
+            modifiesNoun = values[index] as List<WordSynset>;
+            index++;
+          }
         });
       });
     });
@@ -119,12 +170,12 @@ class _WordDisplayState extends State<WordDisplay> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.word.word),
+          title: Text(word.word),
           actions: [
             IconButton(
               icon: const Icon(Icons.volume_up),
               onPressed: () async {
-                await player.setUrl(wordSynsets[0].audioURL);
+                await player.setUrl(wordSynsets[index].audioURL);
                 await player.play();
               },
             ),

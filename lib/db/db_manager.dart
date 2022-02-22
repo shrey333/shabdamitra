@@ -184,7 +184,7 @@ class DbManager {
 
   Future<String> getPOS(int wordId, int synsetId) async {
     await _dbFuture;
-    var cols = (await _db.rawQuery(
+    var rows = (await _db.rawQuery(
         'WITH synset_word_id(swi) AS ( '
         'SELECT synset_word_id '
         'FROM tcp_synset_words '
@@ -193,7 +193,13 @@ class DbManager {
         'SELECT kind_of_noun, verb_category, kind_of_adjective, kind_of_adverb '
         'FROM tcp_word_properties INNER JOIN synset_word_id '
         'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
-        [synsetId, wordId]))[0];
+        [synsetId, wordId]));
+    var cols;
+    if (rows.isEmpty) {
+      return '';
+    } else {
+      cols = rows[0];
+    }
     if (_checkColsForPOS(cols, 'kind_of_noun')) {
       return cols['kind_of_noun'] as String;
     } else if (_checkColsForPOS(cols, 'verb_category')) {
@@ -213,7 +219,7 @@ class DbManager {
 
   Future<String> getCountability(int wordId, int synsetId) async {
     await _dbFuture;
-    return (await _db.rawQuery(
+    var result = (await _db.rawQuery(
         'WITH synset_word_id(swi) AS ( '
         'SELECT synset_word_id '
         'FROM tcp_synset_words '
@@ -221,12 +227,17 @@ class DbManager {
         ') SELECT countability '
         'FROM tcp_word_properties INNER JOIN synset_word_id '
         'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
-        [synsetId, wordId]))[0]['countability'] as String;
+        [synsetId, wordId]));
+    if (result.isEmpty) {
+      return '';
+    } else {
+      return result[0]['countability'] as String;
+    }
   }
 
   Future<Map<String, Object?>> getAffix(int wordId, int synsetId) async {
     await _dbFuture;
-    return (await _db.rawQuery(
+    var result = (await _db.rawQuery(
         'WITH synset_word_id(swi) AS ( '
         'SELECT synset_word_id '
         'FROM tcp_synset_words '
@@ -234,12 +245,17 @@ class DbManager {
         ') SELECT prefix_word, root_word, suffix_word '
         'FROM tcp_word_properties INNER JOIN synset_word_id '
         'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
-        [synsetId, wordId]))[0];
+        [synsetId, wordId]));
+    if (result.isEmpty) {
+      return Map<String, Object?>();
+    } else {
+      return result[0];
+    }
   }
 
   Future<String> getJunction(int wordId, int synsetId) async {
     await _dbFuture;
-    return (await _db.rawQuery(
+    var result = (await _db.rawQuery(
         'WITH synset_word_id(swi) AS ( '
         'SELECT synset_word_id '
         'FROM tcp_synset_words '
@@ -247,12 +263,17 @@ class DbManager {
         ') SELECT sandhi '
         'FROM tcp_word_properties INNER JOIN synset_word_id '
         'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
-        [synsetId, wordId]))[0]['sandhi'] as String;
+        [synsetId, wordId]));
+    if (result.isEmpty) {
+      return '';
+    } else {
+      return result[0]['sandhi'] as String;
+    }
   }
 
   Future<String> getTransitivity(int wordId, int synsetId) async {
     await _dbFuture;
-    return (await _db.rawQuery(
+    var result = (await _db.rawQuery(
         'WITH synset_word_id(swi) AS ( '
         'SELECT synset_word_id '
         'FROM tcp_synset_words '
@@ -260,12 +281,17 @@ class DbManager {
         ') SELECT transitivity '
         'FROM tcp_word_properties INNER JOIN synset_word_id '
         'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
-        [synsetId, wordId]))[0]['transitivity'] as String;
+        [synsetId, wordId]));
+    if (result.isEmpty) {
+      return '';
+    } else {
+      return result[0]['transitivity'] as String;
+    }
   }
 
   Future<String> getIndeclinable(int wordId, int synsetId) async {
     await _dbFuture;
-    return (await _db.rawQuery(
+    var result = (await _db.rawQuery(
         'WITH synset_word_id(swi) AS ( '
         'SELECT synset_word_id '
         'FROM tcp_synset_words '
@@ -273,7 +299,12 @@ class DbManager {
         ') SELECT indeclinable '
         'FROM tcp_word_properties INNER JOIN synset_word_id '
         'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
-        [synsetId, wordId]))[0]['transitivity'] as String;
+        [synsetId, wordId]));
+    if (result.isEmpty) {
+      return '';
+    } else {
+      return result[0]['transitivity'] as String;
+    }
   }
 
   Future<List<Map<String, Object?>>> getHypernyms(int synsetId) async {
