@@ -61,27 +61,15 @@ class DataManager {
     }
     List<Synset> synsets = <Synset>[];
     for (var conceptDefinition in conceptDefinitions) {
-      List<Map<String, Object?>> examples =
-          await _dbManager.getExamples(conceptDefinition['synset_id'] as int);
-      examples = [
-        ...{...examples}
-      ];
-      synsets.add(Synset(
-          synsetId: conceptDefinition['synset_id'] as int,
-          conceptDefinition: ApplicationContext().showSimplifiedData()
-              ? (conceptDefinition['simplified_gloss'] != null &&
-                      conceptDefinition['simplified_gloss'] as String != '')
-                  ? conceptDefinition['simplified_gloss'] as String
-                  : conceptDefinition['concept_definition'] as String
-              : conceptDefinition['concept_definition'] as String,
-          examples: examples
-              .map((example) => ApplicationContext().showSimplifiedData()
-                  ? (example['simplified_example'] != null &&
-                          example['simplified_example'] as String != '')
-                      ? example['simplified_example'] as String
-                      : example['example_content'] as String
-                  : example['example_content'] as String)
-              .toList()));
+      int synsetId = conceptDefinition['synset_id'] as int;
+      String conceptDefinitionCol = 'concept_definition';
+      if (ApplicationContext().showSimplifiedData() &&
+          conceptDefinition['simplified_gloss'] != null &&
+          conceptDefinition['simplified_gloss'] as String != '') {
+        conceptDefinitionCol = 'simplified_gloss';
+      }
+      synsets.add(await _getSynset(
+          synsetId, conceptDefinition[conceptDefinitionCol] as String));
     }
     return synsets;
   }
@@ -108,18 +96,10 @@ class DataManager {
       String word = await _dbManager.getWordFromId(antonym['word_id'] as int);
       String conceptDefinition = await _dbManager
           .getSynsetConceptDefinition(antonym['synset_id'] as int);
-      var examples = await _dbManager.getExamples(antonym['synset_id'] as int);
-      examples = [
-        ...{...examples}
-      ];
+      int synsetId = antonym['synset_id'] as int;
       antonymsWS.add(WordSynset(
           word: Word(wordId: antonym['word_id'] as int, word: word),
-          synset: Synset(
-              synsetId: antonym['synset_id'] as int,
-              conceptDefinition: conceptDefinition,
-              examples: examples
-                  .map((example) => example['example_content'] as String)
-                  .toList())));
+          synset: await _getSynset(synsetId, conceptDefinition)));
     }
     return antonymsWS;
   }
@@ -169,151 +149,63 @@ class DataManager {
 
   Future<List<WordSynset>> getHypernyms(Synset synset) async {
     var rows = await _dbManager.getHypernyms(synset.synsetId);
-    List<WordSynset> hypernyms = <WordSynset>[];
-    for (var row in rows) {
-      int synsetId = row['child_synset_id'] as int;
-      int wordId = (await _dbManager.getWordIdsForSynsetId(synsetId, 1))[0];
-      String conceptDefinition =
-          await _dbManager.getSynsetConceptDefinition(synsetId);
-      var examples = await _dbManager.getExamples(synsetId);
-      examples = [
-        ...{...examples}
-      ];
-      String word = await _dbManager.getWordFromId(wordId);
-      hypernyms.add(WordSynset(
-          word: Word(wordId: wordId, word: word),
-          synset: Synset(
-              synsetId: synsetId,
-              conceptDefinition: conceptDefinition,
-              examples: examples
-                  .map((example) => example['example_content'] as String)
-                  .toList())));
-    }
-    return hypernyms;
+    return _getWordSynsetsFromRows(rows, 'child_synset_id');
   }
 
   Future<List<WordSynset>> getHyponyms(Synset synset) async {
     var rows = await _dbManager.getHyponyms(synset.synsetId);
-    List<WordSynset> hyponyms = <WordSynset>[];
-    for (var row in rows) {
-      int synsetId = row['child_synset_id'] as int;
-      int wordId = (await _dbManager.getWordIdsForSynsetId(synsetId, 1))[0];
-      String conceptDefinition =
-          await _dbManager.getSynsetConceptDefinition(synsetId);
-      var examples = await _dbManager.getExamples(synsetId);
-      examples = [
-        ...{...examples}
-      ];
-      String word = await _dbManager.getWordFromId(wordId);
-      hyponyms.add(WordSynset(
-          word: Word(wordId: wordId, word: word),
-          synset: Synset(
-              synsetId: synsetId,
-              conceptDefinition: conceptDefinition,
-              examples: examples
-                  .map((example) => example['example_content'] as String)
-                  .toList())));
-    }
-    return hyponyms;
+    return _getWordSynsetsFromRows(rows, 'parent_synset_id');
   }
 
   Future<List<WordSynset>> getMeronyms(Synset synset) async {
     var rows = await _dbManager.getMeronyms(synset.synsetId);
-    List<WordSynset> meronyms = <WordSynset>[];
-    for (var row in rows) {
-      int synsetId = row['child_synset_id'] as int;
-      int wordId = (await _dbManager.getWordIdsForSynsetId(synsetId, 1))[0];
-      String conceptDefinition =
-          await _dbManager.getSynsetConceptDefinition(synsetId);
-      var examples = await _dbManager.getExamples(synsetId);
-      examples = [
-        ...{...examples}
-      ];
-      String word = await _dbManager.getWordFromId(wordId);
-      meronyms.add(WordSynset(
-          word: Word(wordId: wordId, word: word),
-          synset: Synset(
-              synsetId: synsetId,
-              conceptDefinition: conceptDefinition,
-              examples: examples
-                  .map((example) => example['example_content'] as String)
-                  .toList())));
-    }
-    return meronyms;
+    return _getWordSynsetsFromRows(rows, 'part_synset_id');
   }
 
   Future<List<WordSynset>> getHolonyms(Synset synset) async {
     var rows = await _dbManager.getHolonyms(synset.synsetId);
-    List<WordSynset> holonyms = <WordSynset>[];
-    for (var row in rows) {
-      int synsetId = row['part_synset_id'] as int;
-      int wordId = (await _dbManager.getWordIdsForSynsetId(synsetId, 1))[0];
-      String conceptDefinition =
-          await _dbManager.getSynsetConceptDefinition(synsetId);
-      var examples = await _dbManager.getExamples(synsetId);
-      examples = [
-        ...{...examples}
-      ];
-      String word = await _dbManager.getWordFromId(wordId);
-      holonyms.add(WordSynset(
-          word: Word(wordId: wordId, word: word),
-          synset: Synset(
-              synsetId: synsetId,
-              conceptDefinition: conceptDefinition,
-              examples: examples
-                  .map((example) => example['example_content'] as String)
-                  .toList())));
-    }
-    return holonyms;
+    return _getWordSynsetsFromRows(rows, 'whole_synset_id');
   }
 
   Future<List<WordSynset>> getModifiesVerb(Synset synset) async {
     var rows = await _dbManager.getModifiesVerb(synset.synsetId);
-    List<WordSynset> modifiesVerb = <WordSynset>[];
-    for (var row in rows) {
-      int synsetId = row['verb_synset_id'] as int;
-      int wordId = (await _dbManager.getWordIdsForSynsetId(synsetId, 1))[0];
-      String conceptDefinition =
-          await _dbManager.getSynsetConceptDefinition(synsetId);
-      var examples = await _dbManager.getExamples(synsetId);
-      examples = [
-        ...{...examples}
-      ];
-      String word = await _dbManager.getWordFromId(wordId);
-      modifiesVerb.add(WordSynset(
-          word: Word(wordId: wordId, word: word),
-          synset: Synset(
-              synsetId: synsetId,
-              conceptDefinition: conceptDefinition,
-              examples: examples
-                  .map((example) => example['example_content'] as String)
-                  .toList())));
-    }
-    return modifiesVerb;
+    return _getWordSynsetsFromRows(rows, 'verb_synset_id');
   }
 
   Future<List<WordSynset>> getModifiesNoun(Synset synset) async {
     var rows = await _dbManager.getModifiesNoun(synset.synsetId);
-    List<WordSynset> modifiesNoun = <WordSynset>[];
+    return _getWordSynsetsFromRows(rows, 'noun_synset_id');
+  }
+
+  Future<List<WordSynset>> _getWordSynsetsFromRows(
+      List<Map<String, Object?>> rows, String synsetIdCol) async {
+    List<WordSynset> wordSynsets = <WordSynset>[];
     for (var row in rows) {
-      int synsetId = row['noun_synset_id'] as int;
+      int synsetId = row[synsetIdCol] as int;
       int wordId = (await _dbManager.getWordIdsForSynsetId(synsetId, 1))[0];
       String conceptDefinition =
           await _dbManager.getSynsetConceptDefinition(synsetId);
-      var examples = await _dbManager.getExamples(synsetId);
-      examples = [
-        ...{...examples}
-      ];
       String word = await _dbManager.getWordFromId(wordId);
-      modifiesNoun.add(WordSynset(
+      wordSynsets.add(WordSynset(
           word: Word(wordId: wordId, word: word),
-          synset: Synset(
-              synsetId: synsetId,
-              conceptDefinition: conceptDefinition,
-              examples: examples
-                  .map((example) => example['example_content'] as String)
-                  .toList())));
+          synset: await _getSynset(synsetId, conceptDefinition)));
     }
-    return modifiesNoun;
+    return wordSynsets;
+  }
+
+  Future<Synset> _getSynset(int synsetId, String conceptDefinition) async {
+    Examples examples = await _dbManager.getExamples(
+        synsetId, ApplicationContext().showSimplifiedData());
+    examples.examples = [
+      ...{...examples.examples}
+    ];
+    String exampleCol =
+        examples.simplified ? 'simplified_example' : 'example_content';
+    return Synset(
+        synsetId: synsetId,
+        conceptDefinition: conceptDefinition,
+        examples: examples.examples
+            .map((example) => example[exampleCol] as String)
+            .toList());
   }
 }

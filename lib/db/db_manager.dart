@@ -74,13 +74,31 @@ class DbManager {
         [wordId]);
   }
 
-  Future<List<Map<String, Object?>>> getExamples(int synsetId) async {
+  Future<Examples> getExamples(int synsetId, bool simplified) async {
     await _dbFuture;
-    return _db.rawQuery(
-        'SELECT example_content, simplified_example '
-        'FROM tcp_synset_example '
-        'WHERE synset_id = ? ',
-        [synsetId]);
+    List<Map<String, Object?>> result;
+    if (simplified) {
+      result = (await _db.rawQuery(
+          'SELECT simplified_example '
+          'FROM tcp_synset_example '
+          'WHERE synset_id = ? ',
+          [synsetId]));
+      if (result.isEmpty) {
+        result = (await _db.rawQuery(
+            'SELECT example_content '
+            'FROM tcp_synset_example '
+            'WHERE synset_id = ? ',
+            [synsetId]));
+        simplified = false;
+      }
+    } else {
+      result = (await _db.rawQuery(
+          'SELECT example_content '
+          'FROM tcp_synset_example '
+          'WHERE synset_id = ? ',
+          [synsetId]));
+    }
+    return Examples(result, simplified);
   }
 
   Future<List<Map<String, Object?>>> getSynsetsForBoardAndStandard(
@@ -194,7 +212,7 @@ class DbManager {
         'FROM tcp_word_properties INNER JOIN synset_word_id '
         'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
         [synsetId, wordId]));
-    var cols;
+    Map<String, Object?> cols;
     if (rows.isEmpty) {
       return '';
     } else {
@@ -247,7 +265,7 @@ class DbManager {
         'ON synset_word_id.swi = tcp_word_properties.synset_word_id ',
         [synsetId, wordId]));
     if (result.isEmpty) {
-      return Map<String, Object?>();
+      return <String, Object?>{};
     } else {
       return result[0];
     }
@@ -378,4 +396,11 @@ class DbManager {
     await _dbFuture;
     _db.close();
   }
+}
+
+class Examples {
+  List<Map<String, Object?>> examples;
+  bool simplified;
+
+  Examples(this.examples, this.simplified);
 }
