@@ -33,7 +33,7 @@ class ApplicationContext {
 
   ApplicationContext._internal() {
     _storage = GetStorage();
-    // _storage.remove('onboardingDone');
+    _storage.remove('onboardingDone');
     if (isOnboardingDone()) {
       if (isUserStudent()) {
         dataManager =
@@ -151,12 +151,11 @@ class ApplicationContext {
 
   void unsetUserTypeStudent() {
     try {
-      if (isUserStudent()) {
-        _storage.remove('studentBoard');
-        _storage.remove('studentBoardIndex');
-        _storage.remove('studentStandard');
-        _storage.remove('studentStandardIndex');
-      }
+      _storage.remove('isUserStudent');
+      _storage.remove('studentBoard');
+      _storage.remove('studentBoardIndex');
+      _storage.remove('studentStandard');
+      _storage.remove('studentStandardIndex');
     } catch (_) {}
   }
 
@@ -205,10 +204,9 @@ class ApplicationContext {
 
   void unsetUserTypeLearner() {
     try {
-      if (isUserLearner()) {
-        _storage.remove('learnerProficiency');
-        _storage.remove('learnerProficiencyIndex');
-      }
+      _storage.remove('isUserStudent');
+      _storage.remove('learnerProficiency');
+      _storage.remove('learnerProficiencyIndex');
     } catch (_) {}
   }
 
@@ -342,5 +340,9 @@ class ApplicationContext {
     } else {
       return getLearnerProficiencyIndex() == 2;
     }
+  }
+
+  void unsetOnboardingDone() {
+    _storage.remove('onboardingDone');
   }
 }

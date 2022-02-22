@@ -1,8 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shabdamitra/onboarding/select_proficiency.dart';
-import 'package:shabdamitra/onboarding/select_student_details.dart';
+import 'package:shabdamitra/application_context.dart';
+import 'package:shabdamitra/enums.dart';
+import 'package:shabdamitra/onboarding/select_user_details.dart';
 
 class SelectUserType extends StatefulWidget {
   const SelectUserType({Key? key}) : super(key: key);
@@ -21,48 +22,52 @@ class _SelectUserTypeState extends State<SelectUserType> {
   ];
 
   Widget customRadio(String text, int index) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.70,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        border: (_selectedIndex == index)
-            ? Border.all(
-                color: Colors.black,
-                width: 3.0,
-              )
-            : null,
-      ),
-      child: OutlinedButton(
-        onPressed: () {
-          setState(
-            () {
-              _selectedIndex = index;
-            },
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Column(
-            children: [
-              Image.asset(
-                images[index],
-                width: MediaQuery.of(context).size.width * 0.14,
-                height: MediaQuery.of(context).size.height * 0.14,
-              ),
-              AutoSizeText(
-                text,
-                maxLines: 1,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color:
-                      (_selectedIndex == index) ? (Colors.blue) : (Colors.grey),
-                  fontWeight: (_selectedIndex == index)
-                      ? (FontWeight.bold)
-                      : (FontWeight.normal),
+    return Flexible(
+      flex: 2,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.70,
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          border: (_selectedIndex == index)
+              ? Border.all(
+                  color: Colors.black,
+                  width: 3.0,
+                )
+              : null,
+        ),
+        child: OutlinedButton(
+          onPressed: () {
+            setState(
+              () {
+                _selectedIndex = index;
+              },
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              children: [
+                Image.asset(
+                  images[index],
+                  width: MediaQuery.of(context).size.width * 0.14,
+                  height: MediaQuery.of(context).size.height * 0.14,
                 ),
-              ),
-            ],
+                AutoSizeText(
+                  text,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: (_selectedIndex == index)
+                        ? (Colors.blue)
+                        : (Colors.grey),
+                    fontWeight: (_selectedIndex == index)
+                        ? (FontWeight.bold)
+                        : (FontWeight.normal),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -88,31 +93,32 @@ class _SelectUserTypeState extends State<SelectUserType> {
         ),
       );
     } else {
+      UserType userType = UserType.student;
       if (_selectedIndex == 1) {
-        Get.to(() => const SelectStudentDetails());
+        userType = UserType.student;
       } else if (_selectedIndex == 2) {
-        Get.to(() => const SelectProficiency());
+        userType = UserType.learner;
       }
+      ApplicationContext().unsetOnboardingDone();
+      ApplicationContext().unsetUserTypeStudent();
+      ApplicationContext().unsetUserTypeLearner();
+      Get.to(() => SelectUserDetails(
+            userType: userType,
+          ));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    double _width = MediaQuery.of(context).size.width;
-    double _height = MediaQuery.of(context).size.height;
-    double _inset = 0.01 * _height;
-    _width = _width - 2 * _inset;
-    _height = _height - 2 * _inset;
     return Scaffold(
       body: SafeArea(
-        minimum: EdgeInsets.all(_inset),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: const Padding(
+              const Flexible(
+                flex: 1,
+                child: Padding(
                   padding: EdgeInsets.all(20.0),
                   child: AutoSizeText(
                     "Tell us about you",
@@ -126,35 +132,38 @@ class _SelectUserTypeState extends State<SelectUserType> {
                 ),
               ),
               Flexible(
+                flex: 5,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 5,
-                      ),
-                      child: const Center(
-                        child: AutoSizeText(
-                          "I am a...",
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black45,
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 5,
+                        ),
+                        child: const Center(
+                          child: AutoSizeText(
+                            "I am a...",
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black45,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     customRadio("Student", 1),
-                    customRadio("Learner or enthusiastic", 2),
+                    customRadio("Learner", 2),
                   ],
                 ),
               ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 0.15 * _height,
+              Flexible(
+                flex: 1,
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(

@@ -12,64 +12,71 @@ class Features extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double _width = MediaQuery.of(context).size.width;
-    double _height = MediaQuery.of(context).size.height;
-    double _inset = 0.01 * _height;
-    _width = _width - 2 * _inset;
-    _height = _height - 2 * _inset;
-
+    double width = 0.6 * MediaQuery.of(context).size.width / 3;
     return Scaffold(
       body: SafeArea(
-        minimum: EdgeInsets.all(_inset),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Flexible(
+              flex: 6,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Flexible(
+                    flex: 3,
                     child: Image.asset('assets/images/learn.png'),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        height: 0.07 * _height,
-                        width: 0.15 * _width,
-                        child: Image.asset("assets/images/image.png"),
-                      ),
-                      SizedBox(
-                        height: 0.07 * _height,
-                        width: 0.15 * _width,
-                        child: Image.asset("assets/images/audio.png"),
-                      ),
-                      SizedBox(
-                        height: 0.07 * _height,
-                        width: 0.15 * _width,
-                        child: Image.asset("assets/images/grammar.png"),
-                      ),
-                    ],
+                  Flexible(
+                    flex: 2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Flexible(
+                          child: Image.asset(
+                            'assets/images/image.png',
+                            width: width,
+                            height: width,
+                          ),
+                        ),
+                        Flexible(
+                          child: Image.asset(
+                            'assets/images/audio.png',
+                            width: width,
+                            height: width,
+                          ),
+                        ),
+                        Flexible(
+                          child: Image.asset(
+                            'assets/images/grammar.png',
+                            width: width,
+                            height: width,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-                    child: AutoSizeText(
-                      "Learning words and grammar using images and audio",
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black45,
+                  const Flexible(
+                    flex: 1,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                      child: AutoSizeText(
+                        'Learning words and grammar using images and audio',
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black45,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: 0.15 * _height,
+            Flexible(
+              flex: 1,
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: ElevatedButton(

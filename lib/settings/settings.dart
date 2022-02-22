@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:shabdamitra/application_context.dart';
-import 'package:shabdamitra/settings/student_settings.dart';
-import 'package:shabdamitra/settings/learner_settings.dart';
+import 'package:shabdamitra/enums.dart';
+import 'package:shabdamitra/settings/user_settings.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -17,7 +17,7 @@ class _SettingsState extends State<Settings> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Are you Sure?"),
+        title: const Text("Are you sure?"),
         content: const Text(
             "You will lose all data pertaining to the selected type."),
         actions: [
@@ -52,44 +52,52 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
+    UserType userType;
+    UserType changeToType;
+    if (ApplicationContext().isUserStudent()) {
+      userType = UserType.student;
+      changeToType = UserType.learner;
+    } else {
+      userType = UserType.learner;
+      changeToType = UserType.student;
+    }
     return SafeArea(
-        child: SettingsList(
-      sections: [
-        SettingsSection(
-          title: const Text('User Settings'),
-          tiles: [
-            CustomSettingsTile(
-              child: ListTile(
-                leading: const CircleAvatar(
-                  child: Icon(Icons.menu),
+      child: SettingsList(
+        sections: [
+          SettingsSection(
+            title: const Text('User Settings'),
+            tiles: [
+              CustomSettingsTile(
+                child: ListTile(
+                  leading: const CircleAvatar(
+                    child: Icon(Icons.menu),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  title: Text(getSettingsTitle(userType)),
+                  subtitle: const Text('Customize your preferences'),
+                  onTap: () {
+                    Get.to(
+                      () => UserSettings(
+                        userType: userType,
+                      ),
+                    );
+                  },
                 ),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                title: Text(ApplicationContext().isUserStudent()
-                    ? 'Student Settings'
-                    : 'Learner Settings'),
-                subtitle: const Text('Customize your preferences'),
-                onTap: () {
-                  ApplicationContext().isUserStudent()
-                      ? Get.to(() => const StudentSettings())
-                      : Get.to(() => const LearnerSettings());
-                },
               ),
-            ),
-            CustomSettingsTile(
-              child: ListTile(
-                leading: const CircleAvatar(child: Icon(Icons.swap_horiz)),
-                title: Text(ApplicationContext().isUserStudent()
-                    ? 'You are Currently a Student'
-                    : 'You are Currently a Learner'),
-                subtitle: Text(ApplicationContext().isUserStudent()
-                    ? 'Tap to Switch to Learner'
-                    : 'Tap to Switch to Student'),
-                onTap: _onTap,
+              CustomSettingsTile(
+                child: ListTile(
+                  leading: const CircleAvatar(child: Icon(Icons.swap_horiz)),
+                  title:
+                      Text('You are currently a ${userTypeToString(userType)}'),
+                  subtitle: Text(
+                      'Tap to switch to ${userTypeToString(changeToType)}'),
+                  onTap: _onTap,
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
-    ));
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
