@@ -102,8 +102,10 @@ class _WordDisplayState extends State<WordDisplay> {
             index++;
           }
           synonyms = values[index] as List<WordSynset>;
+          synonyms = synonyms.sublist(0, synonyms.length >= 5 ? 5 : synonyms.length);
           index++;
           antonyms = values[index] as List<WordSynset>;
+          antonyms = antonyms.sublist(0, antonyms.length >= 5 ? 5 : antonyms.length);
           index++;
           if (ApplicationContext().showGender()) {
             gender = values[index] as Gender;
@@ -138,26 +140,32 @@ class _WordDisplayState extends State<WordDisplay> {
           }
           if (ApplicationContext().showHolonyms()) {
             holonyms = values[index] as List<WordSynset>;
+            holonyms = holonyms.sublist(0, holonyms.length >= 5 ? 5 : holonyms.length);
             index++;
           }
           if (ApplicationContext().showHypernyms()) {
             hypernyms = values[index] as List<WordSynset>;
+            hypernyms = hypernyms.sublist(0, hypernyms.length >= 5 ? 5 : hypernyms.length);
             index++;
           }
           if (ApplicationContext().showHyponyms()) {
             hyponyms = values[index] as List<WordSynset>;
+            hyponyms = hyponyms.sublist(0, hyponyms.length >= 5 ? 5 : hyponyms.length);
             index++;
           }
           if (ApplicationContext().showMeronyms()) {
             meronyms = values[index] as List<WordSynset>;
+            meronyms = meronyms.sublist(0, meronyms.length >= 5 ? 5 : meronyms.length);
             index++;
           }
           if (ApplicationContext().showModifiesVerb()) {
             modifiesVerb = values[index] as List<WordSynset>;
+            modifiesVerb = modifiesVerb.sublist(0, modifiesVerb.length >= 5 ? 5 : modifiesVerb.length);
             index++;
           }
           if (ApplicationContext().showModifiesNoun()) {
             modifiesNoun = values[index] as List<WordSynset>;
+            modifiesNoun = modifiesNoun.sublist(0, modifiesNoun.length >= 5 ? 5 : modifiesNoun.length);
             index++;
           }
         });

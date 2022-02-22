@@ -134,6 +134,7 @@ class ApplicationContext {
   void setStudentBoard(String studentBoard) {
     _storage.write('studentBoard', studentBoard);
     _storage.write('studentBoardIndex', StudentBoards.indexOf(studentBoard));
+    setStudentStandardIndex(defaultStudentStandardIndex);
   }
 
   void setStudentStandardIndex(int studentStandardIndex) {

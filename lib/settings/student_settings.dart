@@ -76,6 +76,7 @@ class _StudentSettingsState extends State<StudentSettings> {
                           () {
                             if (studentProperty == UserProperty.studentBoard) {
                               studentBoardIndex = propertyValueIndex;
+                              studentStandardIndex = ApplicationContext.defaultStudentStandardIndex;
                             } else {
                               studentStandardIndex = propertyValueIndex;
                             }

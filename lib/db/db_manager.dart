@@ -249,7 +249,11 @@ class DbManager {
     if (result.isEmpty) {
       return '';
     } else {
-      return result[0]['countability'] as String;
+      if (result[0]['countability'] == null) {
+        return '';
+      } else {
+        return result[0]['countability'] as String;
+      }
     }
   }
 
@@ -267,7 +271,11 @@ class DbManager {
     if (result.isEmpty) {
       return <String, Object?>{};
     } else {
-      return result[0];
+      if (result[0] == null) {
+        return <String, Object?>{};
+      } else {
+        return result[0];
+      }
     }
   }
 
@@ -285,7 +293,11 @@ class DbManager {
     if (result.isEmpty) {
       return '';
     } else {
-      return result[0]['sandhi'] as String;
+      if (result[0]['sandhi'] == null) {
+        return '';
+      } else {
+        return result[0]['sandhi'] as String;
+      }
     }
   }
 
@@ -303,7 +315,11 @@ class DbManager {
     if (result.isEmpty) {
       return '';
     } else {
-      return result[0]['transitivity'] as String;
+      if (result[0]['transitivity'] == null) {
+        return '';
+      } else {
+        return result[0]['transitivity'] as String;
+      }
     }
   }
 
@@ -321,7 +337,11 @@ class DbManager {
     if (result.isEmpty) {
       return '';
     } else {
-      return result[0]['transitivity'] as String;
+      if (result[0]['indeclinable'] == null) {
+        return '';
+      } else {
+        return result[0]['indeclinable'] as String;
+      }
     }
   }
 

@@ -19,7 +19,7 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
 
   void showPicker(BuildContext _context, UserProperty studentProperty) {
     String title;
-    List<dynamic> propertyValues;
+    List<String> propertyValues;
     int propertyValueIndex;
     if (studentProperty == UserProperty.studentBoard) {
       title = "Student Board";
@@ -28,7 +28,9 @@ class _SelectStudentDetailsState extends State<SelectStudentDetails> {
     } else {
       title = "Student Standard";
       propertyValues = ApplicationContext
-          .StudentBoardsAndStandards[ApplicationContext.StudentBoards[studentBoardIndex]]!;
+          .StudentBoardsAndStandards[ApplicationContext().getStudentBoard()]!
+          .map((standard) => ApplicationContext.toStandardString(standard))
+          .toList();
       propertyValueIndex = studentStandardIndex;
     }
 

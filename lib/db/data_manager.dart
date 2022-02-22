@@ -201,11 +201,15 @@ class DataManager {
     ];
     String exampleCol =
         examples.simplified ? 'simplified_example' : 'example_content';
+    List<String> examples_ = <String>[];
+    for (Map<String, Object?> example in examples.examples) {
+      if (example[exampleCol] != null && example[exampleCol] as String != '') {
+        examples_.add(example[exampleCol] as String);
+      }
+    }
     return Synset(
         synsetId: synsetId,
         conceptDefinition: conceptDefinition,
-        examples: examples.examples
-            .map((example) => example[exampleCol] as String)
-            .toList());
+        examples: examples_);
   }
 }
