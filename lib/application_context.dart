@@ -33,7 +33,6 @@ class ApplicationContext {
 
   ApplicationContext._internal() {
     _storage = GetStorage();
-    _storage.remove('onboardingDone');
     if (isOnboardingDone()) {
       if (isUserStudent()) {
         dataManager =
