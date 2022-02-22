@@ -8,19 +8,28 @@ import 'package:shabdamitra/db/word.dart';
 import 'package:shabdamitra/db/word_synset.dart';
 
 class WordDisplay extends StatefulWidget {
-  final Word word;
-  final int index;
-  const WordDisplay({Key? key, required this.word, required this.index})
+  final Word? word;
+  final int? index;
+  WordSynset? wordSynset;
+  WordDisplay({Key? key, required this.word, required this.index})
+      : super(key: key);
+  WordDisplay.withWordSynset(this.wordSynset, {Key? key, this.word, this.index})
       : super(key: key);
 
   @override
   // ignore: no_logic_in_create_state
-  _WordDisplayState createState() => _WordDisplayState(word, index);
+  _WordDisplayState createState() {
+    if (wordSynset == null) {
+      return _WordDisplayState(word!, index!);
+    } else {
+      return _WordDisplayState.withWordSynset(wordSynset!);
+    }
+  }
 }
 
 class _WordDisplayState extends State<WordDisplay> {
-  Word word;
-  int index;
+  late Word word;
+  late int index;
   List<WordSynset> wordSynsets = <WordSynset>[];
   List<WordSynset> synonyms = <WordSynset>[];
   List<WordSynset> antonyms = <WordSynset>[];
@@ -45,138 +54,148 @@ class _WordDisplayState extends State<WordDisplay> {
   _WordDisplayState(this.word, this.index) {
     word.getWordSynsets().then((wordSynsets) {
       WordSynset wordSynset = wordSynsets[index];
-      List<Future> futures = <Future>[];
-      if (ApplicationContext().showPluralForm()) {
-        futures.add(wordSynset.getPluralForm());
-      }
-      futures.add(wordSynset.getSynonyms());
-      futures.add(wordSynset.getAntonyms());
-      if (ApplicationContext().showGender()) {
-        futures.add(wordSynset.getGender());
-      }
-      if (ApplicationContext().showAffix()) {
-        futures.add(wordSynset.getAffix());
-      }
-      if (ApplicationContext().showCountability()) {
-        futures.add(wordSynset.getCountability());
-      }
-      if (ApplicationContext().showTransitivity()) {
-        futures.add(wordSynset.getTransitivity());
-      }
-      if (ApplicationContext().showIndeclinable()) {
-        futures.add(wordSynset.getIndeclinable());
-      }
-      if (ApplicationContext().showJunction()) {
-        futures.add(wordSynset.getJunction());
-      }
-      if (ApplicationContext().showPOSKind()) {
-        futures.add(wordSynset.getPOS());
-      }
-      if (ApplicationContext().showSpellingVariation()) {
-        // TODO: Get Different Spelling
-      }
-      if (ApplicationContext().showHolonyms()) {
-        futures.add(wordSynset.getHolonyms());
-      }
-      if (ApplicationContext().showHypernyms()) {
-        futures.add(wordSynset.getHypernyms());
-      }
-      if (ApplicationContext().showHyponyms()) {
-        futures.add(wordSynset.getHyponyms());
-      }
-      if (ApplicationContext().showMeronyms()) {
-        futures.add(wordSynset.getMeronyms());
-      }
-      if (ApplicationContext().showModifiesVerb()) {
-        futures.add(wordSynset.getModifiesVerb());
-      }
-      if (ApplicationContext().showModifiesNoun()) {
-        futures.add(wordSynset.getModifiesNoun());
-      }
-      Future.wait(futures).then((values) {
-        setState(() {
-          this.wordSynsets.add(wordSynset);
-          int index = 0;
-          if (ApplicationContext().showPluralForm()) {
-            pluralForm = values[index] as String;
-            index++;
-          }
-          synonyms = values[index] as List<WordSynset>;
-          synonyms =
-              synonyms.sublist(0, synonyms.length >= 5 ? 5 : synonyms.length);
+      _commonInit(wordSynset);
+    });
+  }
+
+  _WordDisplayState.withWordSynset(WordSynset wordSynset) {
+    word = wordSynset.word;
+    index = 0;
+    _commonInit(wordSynset);
+  }
+
+  _commonInit(WordSynset wordSynset) {
+    List<Future> futures = <Future>[];
+    if (ApplicationContext().showPluralForm()) {
+      futures.add(wordSynset.getPluralForm());
+    }
+    futures.add(wordSynset.getSynonyms());
+    futures.add(wordSynset.getAntonyms());
+    if (ApplicationContext().showGender()) {
+      futures.add(wordSynset.getGender());
+    }
+    if (ApplicationContext().showAffix()) {
+      futures.add(wordSynset.getAffix());
+    }
+    if (ApplicationContext().showCountability()) {
+      futures.add(wordSynset.getCountability());
+    }
+    if (ApplicationContext().showTransitivity()) {
+      futures.add(wordSynset.getTransitivity());
+    }
+    if (ApplicationContext().showIndeclinable()) {
+      futures.add(wordSynset.getIndeclinable());
+    }
+    if (ApplicationContext().showJunction()) {
+      futures.add(wordSynset.getJunction());
+    }
+    if (ApplicationContext().showPOSKind()) {
+      futures.add(wordSynset.getPOS());
+    }
+    if (ApplicationContext().showSpellingVariation()) {
+      // TODO: Get Different Spelling
+    }
+    if (ApplicationContext().showHolonyms()) {
+      futures.add(wordSynset.getHolonyms());
+    }
+    if (ApplicationContext().showHypernyms()) {
+      futures.add(wordSynset.getHypernyms());
+    }
+    if (ApplicationContext().showHyponyms()) {
+      futures.add(wordSynset.getHyponyms());
+    }
+    if (ApplicationContext().showMeronyms()) {
+      futures.add(wordSynset.getMeronyms());
+    }
+    if (ApplicationContext().showModifiesVerb()) {
+      futures.add(wordSynset.getModifiesVerb());
+    }
+    if (ApplicationContext().showModifiesNoun()) {
+      futures.add(wordSynset.getModifiesNoun());
+    }
+    Future.wait(futures).then((values) {
+      setState(() {
+        wordSynsets.add(wordSynset);
+        int index = 0;
+        if (ApplicationContext().showPluralForm()) {
+          pluralForm = values[index] as String;
           index++;
-          antonyms = values[index] as List<WordSynset>;
-          antonyms =
-              antonyms.sublist(0, antonyms.length >= 5 ? 5 : antonyms.length);
+        }
+        synonyms = values[index] as List<WordSynset>;
+        synonyms =
+            synonyms.sublist(0, synonyms.length >= 5 ? 5 : synonyms.length);
+        index++;
+        antonyms = values[index] as List<WordSynset>;
+        antonyms =
+            antonyms.sublist(0, antonyms.length >= 5 ? 5 : antonyms.length);
+        index++;
+        if (ApplicationContext().showGender()) {
+          gender = values[index] as Gender;
           index++;
-          if (ApplicationContext().showGender()) {
-            gender = values[index] as Gender;
-            index++;
-          }
-          if (ApplicationContext().showAffix()) {
-            affix = values[index] as Affix;
-            index++;
-          }
-          if (ApplicationContext().showCountability()) {
-            countability = values[index] as Countability;
-            index++;
-          }
-          if (ApplicationContext().showTransitivity()) {
-            transitivity = values[index] as Transitivity;
-            index++;
-          }
-          if (ApplicationContext().showIndeclinable()) {
-            indeclinable = values[index] as Indeclinable;
-            index++;
-          }
-          if (ApplicationContext().showJunction()) {
-            junction = values[index] as Junction;
-            index++;
-          }
-          if (ApplicationContext().showPOSKind()) {
-            posWithSubtype = values[index] as PartOfSpeechWithSubtype;
-            index++;
-          }
-          if (ApplicationContext().showSpellingVariation()) {
-            // TODO: Get Different Spelling
-          }
-          if (ApplicationContext().showHolonyms()) {
-            holonyms = values[index] as List<WordSynset>;
-            holonyms =
-                holonyms.sublist(0, holonyms.length >= 5 ? 5 : holonyms.length);
-            index++;
-          }
-          if (ApplicationContext().showHypernyms()) {
-            hypernyms = values[index] as List<WordSynset>;
-            hypernyms = hypernyms.sublist(
-                0, hypernyms.length >= 5 ? 5 : hypernyms.length);
-            index++;
-          }
-          if (ApplicationContext().showHyponyms()) {
-            hyponyms = values[index] as List<WordSynset>;
-            hyponyms =
-                hyponyms.sublist(0, hyponyms.length >= 5 ? 5 : hyponyms.length);
-            index++;
-          }
-          if (ApplicationContext().showMeronyms()) {
-            meronyms = values[index] as List<WordSynset>;
-            meronyms =
-                meronyms.sublist(0, meronyms.length >= 5 ? 5 : meronyms.length);
-            index++;
-          }
-          if (ApplicationContext().showModifiesVerb()) {
-            modifiesVerb = values[index] as List<WordSynset>;
-            modifiesVerb = modifiesVerb.sublist(
-                0, modifiesVerb.length >= 5 ? 5 : modifiesVerb.length);
-            index++;
-          }
-          if (ApplicationContext().showModifiesNoun()) {
-            modifiesNoun = values[index] as List<WordSynset>;
-            modifiesNoun = modifiesNoun.sublist(
-                0, modifiesNoun.length >= 5 ? 5 : modifiesNoun.length);
-            index++;
-          }
-        });
+        }
+        if (ApplicationContext().showAffix()) {
+          affix = values[index] as Affix;
+          index++;
+        }
+        if (ApplicationContext().showCountability()) {
+          countability = values[index] as Countability;
+          index++;
+        }
+        if (ApplicationContext().showTransitivity()) {
+          transitivity = values[index] as Transitivity;
+          index++;
+        }
+        if (ApplicationContext().showIndeclinable()) {
+          indeclinable = values[index] as Indeclinable;
+          index++;
+        }
+        if (ApplicationContext().showJunction()) {
+          junction = values[index] as Junction;
+          index++;
+        }
+        if (ApplicationContext().showPOSKind()) {
+          posWithSubtype = values[index] as PartOfSpeechWithSubtype;
+          index++;
+        }
+        if (ApplicationContext().showSpellingVariation()) {
+          // TODO: Get Different Spelling
+        }
+        if (ApplicationContext().showHolonyms()) {
+          holonyms = values[index] as List<WordSynset>;
+          holonyms =
+              holonyms.sublist(0, holonyms.length >= 5 ? 5 : holonyms.length);
+          index++;
+        }
+        if (ApplicationContext().showHypernyms()) {
+          hypernyms = values[index] as List<WordSynset>;
+          hypernyms = hypernyms.sublist(
+              0, hypernyms.length >= 5 ? 5 : hypernyms.length);
+          index++;
+        }
+        if (ApplicationContext().showHyponyms()) {
+          hyponyms = values[index] as List<WordSynset>;
+          hyponyms =
+              hyponyms.sublist(0, hyponyms.length >= 5 ? 5 : hyponyms.length);
+          index++;
+        }
+        if (ApplicationContext().showMeronyms()) {
+          meronyms = values[index] as List<WordSynset>;
+          meronyms =
+              meronyms.sublist(0, meronyms.length >= 5 ? 5 : meronyms.length);
+          index++;
+        }
+        if (ApplicationContext().showModifiesVerb()) {
+          modifiesVerb = values[index] as List<WordSynset>;
+          modifiesVerb = modifiesVerb.sublist(
+              0, modifiesVerb.length >= 5 ? 5 : modifiesVerb.length);
+          index++;
+        }
+        if (ApplicationContext().showModifiesNoun()) {
+          modifiesNoun = values[index] as List<WordSynset>;
+          modifiesNoun = modifiesNoun.sublist(
+              0, modifiesNoun.length >= 5 ? 5 : modifiesNoun.length);
+          index++;
+        }
       });
     });
   }
@@ -261,7 +280,10 @@ class _WordDisplayState extends State<WordDisplay> {
                           children: synonyms.map((synonym) {
                             return ActionChip(
                                 label: Text(synonym.word.word),
-                                onPressed: () {});
+                                onPressed: () {
+                                  Get.to(() =>
+                                      WordDisplay.withWordSynset(synonym));
+                                });
                           }).toList(),
                         ),
                       ),
@@ -269,10 +291,13 @@ class _WordDisplayState extends State<WordDisplay> {
                       ListTile(
                         title: const Text('विलोम शब्द'),
                         subtitle: Wrap(
-                          children: antonyms.map((opposite) {
+                          children: antonyms.map((antonym) {
                             return ActionChip(
-                                label: Text(opposite.word.word),
-                                onPressed: () {});
+                                label: Text(antonym.word.word),
+                                onPressed: () {
+                                  Get.to(() =>
+                                      WordDisplay.withWordSynset(antonym));
+                                });
                           }).toList(),
                         ),
                       ),
@@ -328,7 +353,10 @@ class _WordDisplayState extends State<WordDisplay> {
                           children: hypernyms.map((hypernym) {
                             return ActionChip(
                                 label: Text(hypernym.word.word),
-                                onPressed: () {});
+                                onPressed: () {
+                                  Get.to(() =>
+                                      WordDisplay.withWordSynset(hypernym));
+                                });
                           }).toList(),
                         ),
                       ),
@@ -340,7 +368,10 @@ class _WordDisplayState extends State<WordDisplay> {
                           children: hyponyms.map((hyponym) {
                             return ActionChip(
                                 label: Text(hyponym.word.word),
-                                onPressed: () {});
+                                onPressed: () {
+                                  Get.to(() =>
+                                      WordDisplay.withWordSynset(hyponym));
+                                });
                           }).toList(),
                         ),
                       ),
@@ -352,7 +383,10 @@ class _WordDisplayState extends State<WordDisplay> {
                           children: meronyms.map((meronym) {
                             return ActionChip(
                                 label: Text(meronym.word.word),
-                                onPressed: () {});
+                                onPressed: () {
+                                  Get.to(() =>
+                                      WordDisplay.withWordSynset(meronym));
+                                });
                           }).toList(),
                         ),
                       ),
@@ -364,7 +398,10 @@ class _WordDisplayState extends State<WordDisplay> {
                           children: holonyms.map((holonym) {
                             return ActionChip(
                                 label: Text(holonym.word.word),
-                                onPressed: () {});
+                                onPressed: () {
+                                  Get.to(() =>
+                                      WordDisplay.withWordSynset(holonym));
+                                });
                           }).toList(),
                         ),
                       ),
@@ -376,7 +413,10 @@ class _WordDisplayState extends State<WordDisplay> {
                           children: modifiesVerb.map((_modifiesVerb) {
                             return ActionChip(
                                 label: Text(_modifiesVerb.word.word),
-                                onPressed: () {});
+                                onPressed: () {
+                                  Get.to(() => WordDisplay.withWordSynset(
+                                      _modifiesVerb));
+                                });
                           }).toList(),
                         ),
                       ),
@@ -388,7 +428,10 @@ class _WordDisplayState extends State<WordDisplay> {
                           children: modifiesVerb.map((_modifiesNoun) {
                             return ActionChip(
                                 label: Text(_modifiesNoun.word.word),
-                                onPressed: () {});
+                                onPressed: () {
+                                  Get.to(() => WordDisplay.withWordSynset(
+                                      _modifiesNoun));
+                                });
                           }).toList(),
                         ),
                       ),
