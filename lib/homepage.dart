@@ -12,46 +12,47 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late int _selectedIndex;
-
-  _HomePageState() {
-    if (ApplicationContext().isUserStudent()) {
-      _selectedIndex = 0;
-    } else {
-      _selectedIndex = 1;
-    }
-  }
-
-  final _listWidget = [
-    const Lessons(),
-    const Search(),
-    const Settings(),
-  ];
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgets = <Widget>[
+      if (ApplicationContext().isUserStudent()) const Lessons(),
+      const Search(),
+      Settings(onChange: () {
+        setState(() {
+          if (ApplicationContext().isUserStudent()) {
+            _selectedIndex = 2;
+          } else {
+            _selectedIndex = 1;
+          }
+        });
+      }),
+    ];
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() {
           _selectedIndex = index;
         }),
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book),
-            label: 'Lessons',
-          ),
-          BottomNavigationBarItem(
+        items: <BottomNavigationBarItem>[
+          if (ApplicationContext().isUserStudent())
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.menu_book),
+              label: 'Lessons',
+            ),
+          const BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'Search',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
           ),
         ],
       ),
-      body: _listWidget[_selectedIndex],
+      body: widgets[_selectedIndex],
     );
   }
 }

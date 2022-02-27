@@ -28,20 +28,10 @@ class ApplicationContext {
     'Expert',
   ];
 
-  late final GetStorage _storage;
-  late DataManager dataManager;
+  final GetStorage _storage = GetStorage();
+  final DataManager dataManager = DataManager();
 
-  ApplicationContext._internal() {
-    _storage = GetStorage();
-    if (isOnboardingDone()) {
-      if (isUserStudent()) {
-        dataManager =
-            DataManager.withHints(getStudentBoard(), getStudentStandard());
-      } else {
-        dataManager = DataManager();
-      }
-    }
-  }
+  ApplicationContext._internal();
 
   static final ApplicationContext _instance = ApplicationContext._internal();
 
@@ -117,8 +107,6 @@ class ApplicationContext {
     _storage.write('studentStandard',
         StudentBoardsAndStandards[StudentBoards[boardIndex]]![standardIndex]);
     _storage.write('studentStandardIndex', standardIndex);
-    dataManager =
-        DataManager.withHints(getStudentBoard(), getStudentStandard());
   }
 
   void setUserTypeStudentWithDefaultValues() {
@@ -182,7 +170,6 @@ class ApplicationContext {
     _storage.write(
         'learnerProficiency', LearnerProficiencies[proficiencyIndex]);
     _storage.write('learnerProficiencyIndex', proficiencyIndex);
-    dataManager = DataManager();
   }
 
   void setUserTypeLearnerWithDefaultValues() {

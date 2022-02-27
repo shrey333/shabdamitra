@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+import 'package:shabdamitra/application_context.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbManager {
@@ -52,23 +53,31 @@ class DbManager {
 
   Future<int> getWordId(String word) async {
     await _dbFuture;
-    return _db.rawQuery('SELECT word_id FROM tcp_word WHERE word = ?',
-        [word]).then((list) => list[0]['word_id'] as int);
+    var result = (await _db
+        .rawQuery('SELECT word_id FROM tcp_word WHERE word = ?', [word]));
+    if (result.isNotEmpty) {
+      return result.first['word_id'] as int;
+    }
+    throw Exception('No such word exists');
   }
 
-  Future<String> getWordFromId(int id) async {
+  Future<String> getWordFromWordId(int wordId) async {
     await _dbFuture;
-    return _db.rawQuery('SELECT word FROM tcp_word WHERE word_id = ?',
-        [id]).then((list) => list[0]['word'] as String);
+    var result = (await _db
+        .rawQuery('SELECT word FROM tcp_word WHERE word_id = ?', [wordId]));
+    if (result.isNotEmpty) {
+      return result.first['word'] as String;
+    }
+    throw Exception('Word with given word id does not exist');
   }
 
-  Future<List<Map<String, Object?>>> getSynsets(int wordId) async {
+  Future<List<Map<String, Object?>>> getSynsetsForWord(int wordId) async {
     await _dbFuture;
     return _db.rawQuery(
         'WITH synset_id(si) AS ( '
         'SELECT DISTINCT synset_id '
         'FROM tcp_synset_words WHERE word_id = ? '
-        ') SELECT synset_id, concept_definition '
+        ') SELECT synset_id, concept_definition, simplified_gloss '
         'FROM synset_id INNER JOIN tcp_synset '
         'ON synset_id.si = tcp_synset.synset_id ',
         [wordId]);
@@ -101,20 +110,6 @@ class DbManager {
     return Examples(result, simplified);
   }
 
-  Future<List<Map<String, Object?>>> getSynsetsForBoardAndStandard(
-      int wordId, String board, int standard) async {
-    await _dbFuture;
-    return _db.rawQuery(
-        'WITH synset_id(si) AS ( '
-        'SELECT DISTINCT synset_id '
-        'FROM tcp_word_collection '
-        'WHERE word_id = ? AND board = ? AND class_id = ? '
-        ') SELECT synset_id, concept_definition, simplified_gloss '
-        'FROM synset_id INNER JOIN tcp_synset '
-        'ON synset_id.si = tcp_synset.synset_id ',
-        [wordId, board, standard]);
-  }
-
   Future<String> getGender(int wordId, int synsetId) async {
     await _dbFuture;
     return _db.rawQuery(
@@ -130,21 +125,17 @@ class DbManager {
         'SELECT DISTINCT lesson_id FROM tcp_word_collection '
         'WHERE board = ? AND class_id = ? AND lesson_id > 0 '
         'ORDER BY lesson_id ',
-        [board, standard + 1]).then((list) {
+        [board, standard]).then((list) {
       return list.map((map) => map['lesson_id'] as int).toList();
     });
   }
 
-  Future<List<Map<String, Object?>>> getLessonWords(
+  Future<List<Map<String, Object?>>> getLessonWordsAndSynsets(
       String board, int standard, int lesson) async {
     await _dbFuture;
     return _db.rawQuery(
-        'WITH word_id(wi) AS ( '
-        'SELECT word_id FROM tcp_word_collection '
-        'WHERE board = ? AND class_id = ? AND lesson_id = ? '
-        ') SELECT word_id, word '
-        'FROM word_id INNER JOIN tcp_word '
-        'ON word_id.wi = tcp_word.word_id ',
+        'SELECT word_id, synset_id FROM tcp_word_collection '
+        'WHERE board = ? AND class_id = ? AND lesson_id = ? ',
         [board, standard, lesson]);
   }
 
@@ -193,11 +184,23 @@ class DbManager {
 
   Future<String> getSynsetConceptDefinition(int synsetId) async {
     await _dbFuture;
-    return (await _db.rawQuery(
-        'SELECT concept_definition '
+    bool simplified = ApplicationContext().showSimplifiedData();
+    var result = await _db.rawQuery(
+        'SELECT concept_definition, simplified_gloss '
         'FROM tcp_synset '
         'WHERE synset_id = ? ',
-        [synsetId]))[0]['concept_definition'] as String;
+        [synsetId]);
+    if (result.isNotEmpty) {
+      String conceptDefinitionCol = 'concept_definition';
+      if (simplified) {
+        if (result.first['simplified_gloss'] != null &&
+            result.first['simplified_gloss'] as String != '') {
+          conceptDefinitionCol = 'simplified_gloss';
+        }
+        return result.first[conceptDefinitionCol] as String;
+      }
+    }
+    throw Exception('Synset with given synset id does not exist.');
   }
 
   Future<String> getPOS(int wordId, int synsetId) async {
@@ -271,11 +274,7 @@ class DbManager {
     if (result.isEmpty) {
       return <String, Object?>{};
     } else {
-      if (result[0] == null) {
-        return <String, Object?>{};
-      } else {
-        return result[0];
-      }
+      return result.first;
     }
   }
 
@@ -410,6 +409,13 @@ class DbManager {
             [synsetId, limit]))
         .map((map) => map['word_id'] as int)
         .toList();
+  }
+
+  Future<List<Map<String, Object?>>> getSuggestions(String prefix) async {
+    await _dbFuture;
+    String pattern = prefix + '%';
+    return (await _db.rawQuery(
+        'SELECT word_id, word FROM tcp_word WHERE word LIKE ?', [pattern]));
   }
 
   Future<void> ensureDbConnectionClosed() async {

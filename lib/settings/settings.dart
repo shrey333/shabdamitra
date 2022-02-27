@@ -1,3 +1,5 @@
+// ignore_for_file: no_logic_in_create_state
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -6,13 +8,17 @@ import 'package:shabdamitra/enums.dart';
 import 'package:shabdamitra/settings/user_settings.dart';
 
 class Settings extends StatefulWidget {
-  const Settings({Key? key}) : super(key: key);
+  final void Function() onChange;
+  const Settings({Key? key, required this.onChange}) : super(key: key);
 
   @override
-  _SettingsState createState() => _SettingsState();
+  _SettingsState createState() => _SettingsState(onChange);
 }
 
 class _SettingsState extends State<Settings> {
+  final void Function() onChange;
+  _SettingsState(this.onChange);
+
   _onTap() {
     showDialog(
       context: context,
@@ -38,6 +44,7 @@ class _SettingsState extends State<Settings> {
                   }
                 },
               );
+              onChange();
               Get.back();
             },
             child: const Text(

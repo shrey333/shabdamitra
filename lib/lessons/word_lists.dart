@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shabdamitra/ErrorHandlers/error.dart';
+import 'package:shabdamitra/application_context.dart';
 import 'package:shabdamitra/db/lesson.dart';
-import 'package:shabdamitra/db/word.dart';
+import 'package:shabdamitra/db/word_synset.dart';
 import 'package:shabdamitra/word/word_display.dart';
 
 class WordLists extends StatefulWidget {
@@ -15,49 +17,60 @@ class WordLists extends StatefulWidget {
 
 class _WordListsState extends State<WordLists> {
   final Lesson lesson;
-  List<Word> words = <Word>[];
 
-  _WordListsState(this.lesson) {
-    lesson.words.then((value) => setState(() {
-          words = value;
-        }));
-  }
+  _WordListsState(this.lesson);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Word Lists"),
-      ),
-      body: words.isEmpty
-          ? Center(
-              child: SizedBox(
-                child: const CircularProgressIndicator(),
-                height: context.mediaQuery.size.height * 0.05,
-              ),
-            )
-          : ListView.builder(
-              itemCount: words.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  child: ListTile(
-                    minVerticalPadding: 10,
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.blue.shade500,
-                      child: Text(words[index].word[0]),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(ApplicationContext().getStudentBoard() +
+              ' ' +
+              ApplicationContext().getStudentStandardString() +
+              ', Lesson ' +
+              lesson.lessonId.toString()),
+        ),
+        body: FutureBuilder<List<WordSynset>>(
+          future: lesson.getLessonWordSynsets(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.hasError) {
+              return const ErrorRoute();
+            }
+            if (snapshot.hasData) {
+              List<WordSynset> lessonWordSynsets = snapshot.data!;
+              return ListView.builder(
+                itemCount: lessonWordSynsets.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    child: ListTile(
+                      minVerticalPadding: 10,
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.blue.shade500,
+                        child: Text(lessonWordSynsets[index].word.word[0]),
+                      ),
+                      title: Text(lessonWordSynsets[index].word.word),
+                      onTap: () {
+                        Get.to(() => WordDisplay(
+                              wordSynsets: lessonWordSynsets,
+                              initialWordSynset: index,
+                            ));
+                      },
                     ),
-                    title: Text(words[index].word),
-                    onTap: () {
-                      Get.to(() => WordDisplay(
-                            word: words[index],
-                            index: 0,
-                          ));
-                    },
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                );
-              },
-            ),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                  );
+                },
+              );
+            }
+            return Container();
+          },
+        ),
+      ),
     );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-import 'package:shabdamitra/db/data_manager.dart';
+import 'package:shabdamitra/ErrorHandlers/error.dart';
+import 'package:shabdamitra/application_context.dart';
+import 'package:shabdamitra/db/word.dart';
 import 'package:shabdamitra/db/word_synset.dart';
 import 'package:shabdamitra/word/word_display.dart';
 
@@ -14,89 +14,115 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  List<WordSynset> wordSynsets = <WordSynset>[];
-
   @override
   Widget build(BuildContext context) {
-    DataManager dataManager = DataManager();
-    return SafeArea(
-      child: FloatingSearchBar(
-        body: FloatingSearchBarScrollNotifier(
-          child: ListView.builder(
-            padding: const EdgeInsets.only(top: 60),
-            itemCount: wordSynsets.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.blue,
-                  child: Center(
-                    child: Text(wordSynsets[index].word.word[0]),
-                  ),
-                ),
-                title: Text(wordSynsets[index].word.word),
-                onTap: () {
-                  Get.to(() => WordDisplay(
-                        word: wordSynsets[index].word,
-                        index: index,
-                      ));
-                },
-              );
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Search Shabdamitra"),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              showSearch(context: context, delegate: SearchShabdamitra());
             },
-          ),
-        ),
-        hint: 'Search any hindi word...',
-        scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
-        transitionDuration: const Duration(milliseconds: 400),
-        transitionCurve: Curves.easeInOut,
-        physics: const BouncingScrollPhysics(),
-        axisAlignment: 0.0,
-        openAxisAlignment: 0.0,
-        width: 600,
-        debounceDelay: const Duration(milliseconds: 400),
-        onQueryChanged: (query) {
-          dataManager.getWord(query).then((word) {
-            word.getWordSynsets().then((_wordSynsets) async {
-              List<WordSynset> ws = <WordSynset>[];
-              for (var wordSynsetFut in _wordSynsets) {
-                ws.add(await wordSynsetFut);
-              }
-              setState(() {
-                wordSynsets = ws;
-              });
-            });
-          });
-        },
-        transition: CircularFloatingSearchBarTransition(),
-        actions: [
-          FloatingSearchBarAction(
-            showIfOpened: false,
-            child: CircularButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {},
-            ),
-          ),
-          FloatingSearchBarAction.searchToClear(
-            showIfClosed: false,
+            icon: const Icon(Icons.search),
           ),
         ],
-        builder: (context, transition) {
-          // return ClipRRect(
-          //   borderRadius: BorderRadius.circular(8),
-          //   // child: Material(
-          //   //   color: Colors.white,
-          //   //   elevation: 4.0,
-          //   // child: Column(
-          //   //   mainAxisSize: MainAxisSize.min,
-          //   //   children: Colors.accents.map(
-          //   //     (color) {
-          //   //       return Container(height: 50, color: color);
-          //   //     },
-          //   //   ).toList(),
-          //   // ),
-          // );
-          return const SizedBox.shrink();
-        },
       ),
+    );
+  }
+}
+
+class SearchShabdamitra extends SearchDelegate<String> {
+  List<Word> suggestions = <Word>[];
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        onPressed: () {
+          query = '';
+        },
+        icon: const Icon(Icons.clear),
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        close(context, query);
+      },
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return FutureBuilder<Word>(
+      future: ApplicationContext().dataManager.getWord(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Align(
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (snapshot.hasError) {
+          return Container();
+        }
+        if (snapshot.hasData) {
+          Word word = snapshot.data!;
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.blue.shade500,
+              child: Text(word.word[0]),
+            ),
+            title: Text(word.word),
+            onTap: () {
+              Get.to(() {
+                return FutureBuilder<List<WordSynset>>(
+                  future: word.getWordSynsets(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return const Align(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return const ErrorRoute();
+                    }
+                    if (snapshot.hasData) {
+                      List<WordSynset> wordSynsets = snapshot.data!;
+                      if (wordSynsets.isNotEmpty) {
+                        return WordDisplay(wordSynsets: wordSynsets);
+                      } else {
+                        return Center(
+                          child: Text(
+                            'Sorry. Couldn\'t find word: ' + query,
+                            style: const TextStyle(fontSize: 20.0),
+                          ),
+                        );
+                      }
+                    }
+                    return Container();
+                  },
+                );
+              });
+            },
+          );
+        }
+        return Container();
+      },
     );
   }
 }
