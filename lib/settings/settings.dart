@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:shabdamitra/application_context.dart';
 import 'package:shabdamitra/enums.dart';
+import 'package:shabdamitra/settings/about.dart';
 import 'package:shabdamitra/settings/user_settings.dart';
 
 class Settings extends StatefulWidget {
@@ -103,6 +104,26 @@ class _SettingsState extends State<Settings> {
               ),
             ],
           ),
+          SettingsSection(
+            title: const Text("General"),
+            tiles: [
+              CustomSettingsTile(
+                child: ListTile(
+                  leading: const CircleAvatar(
+                    child: Icon(Icons.person),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  title: const Text("About the developers"),
+                  subtitle: const Text("Contact Us"),
+                  onTap: (){
+                    Get.to(
+                      () => const About()
+                    );
+                  },
+                )
+              )
+            ]
+          )
         ],
       ),
     );
