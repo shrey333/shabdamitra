@@ -162,27 +162,34 @@ class _SelectUserTypeState extends State<SelectUserType> {
                   ],
                 ),
               ),
-              Flexible(
+              const Flexible(
                 flex: 1,
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: ElevatedButton(
-                    onPressed: _onNext,
-                    child: const AutoSizeText(
-                      ' N E X T ->',
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  padding: EdgeInsets.all(20.0),
+                  child: SizedBox(
+                    height: 20.0,
                   ),
+                  // child: ElevatedButton(
+                  //   onPressed: _onNext,
+                  //   child: const AutoSizeText(
+                  //     ' N E X T ->',
+                  //     textAlign: TextAlign.center,
+                  //     maxLines: 1,
+                  //     style: TextStyle(
+                  //       fontSize: 20,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
                 ),
               ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: _onNext,
+          label: const Text("NEXT->")
       ),
     );
   }

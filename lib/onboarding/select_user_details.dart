@@ -89,36 +89,52 @@ class _SelectUserDetailsState extends State<SelectUserDetails> {
                   ],
                 ),
               ),
-              Flexible(
+              const Flexible(
                 flex: 1,
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (userType == UserType.student) {
-                        ApplicationContext()
-                            .setUserTypeStudentWithDefaultValues();
-                      } else {
-                        ApplicationContext()
-                            .setUserTypeLearnerWithDefaultValues();
-                      }
-                      Get.offAll(() => const HomePage());
-                    },
-                    child: const AutoSizeText(
-                      ' F I N I S H !',
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  padding: EdgeInsets.all(20.0),
+                  child: SizedBox(
+                    height: 20.0,
                   ),
+                  // child: ElevatedButton(
+                  //   onPressed: () {
+                  //     if (userType == UserType.student) {
+                  //       ApplicationContext()
+                  //           .setUserTypeStudentWithDefaultValues();
+                  //     } else {
+                  //       ApplicationContext()
+                  //           .setUserTypeLearnerWithDefaultValues();
+                  //     }
+                  //     Get.offAll(() => const HomePage());
+                  //   },
+                  //   child: const AutoSizeText(
+                  //     ' F I N I S H !',
+                  //     maxLines: 1,
+                  //     textAlign: TextAlign.center,
+                  //     style: TextStyle(
+                  //       fontSize: 20,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
                 ),
               ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            if (userType == UserType.student) {
+              ApplicationContext()
+                  .setUserTypeStudentWithDefaultValues();
+            } else {
+              ApplicationContext()
+                  .setUserTypeLearnerWithDefaultValues();
+            }
+            Get.offAll(() => const HomePage());
+          },
+          label: const Text("FINISH!")
       ),
     );
   }

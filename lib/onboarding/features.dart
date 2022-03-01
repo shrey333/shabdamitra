@@ -75,25 +75,32 @@ class Features extends StatelessWidget {
                 ],
               ),
             ),
-            Flexible(
+            const Flexible(
               flex: 1,
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: ElevatedButton(
-                  onPressed: _onNext,
-                  child: const AutoSizeText(
-                    ' N E X T ->',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 1,
-                  ),
+                padding: EdgeInsets.all(20.0),
+                child: SizedBox(
+                  height: 20.0,
                 ),
+                // child: ElevatedButton(
+                //   onPressed: _onNext,
+                //   child: const AutoSizeText(
+                //     ' N E X T ->',
+                //     style: TextStyle(
+                //       fontSize: 20,
+                //       fontWeight: FontWeight.bold,
+                //     ),
+                //     maxLines: 1,
+                //   ),
+                // ),
               ),
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: _onNext,
+          label: const Text("NEXT->")
       ),
     );
   }
