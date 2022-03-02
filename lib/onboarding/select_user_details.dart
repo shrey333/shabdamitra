@@ -125,12 +125,14 @@ class _SelectUserDetailsState extends State<SelectUserDetails> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            if (userType == UserType.student) {
-              ApplicationContext()
-                  .setUserTypeStudentWithDefaultValues();
-            } else {
-              ApplicationContext()
-                  .setUserTypeLearnerWithDefaultValues();
+            if (!ApplicationContext().isOnboardingDone()) {
+              if (userType == UserType.student) {
+                ApplicationContext()
+                    .setUserTypeStudentWithDefaultValues();
+              } else {
+                ApplicationContext()
+                    .setUserTypeLearnerWithDefaultValues();
+              }
             }
             Get.offAll(() => const HomePage());
           },
