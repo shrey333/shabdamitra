@@ -1,9 +1,14 @@
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
+import 'dart:collection';
+
 import 'package:get_storage/get_storage.dart';
 import 'package:shabdamitra/db/data_manager.dart';
+import 'package:shabdamitra/db/word.dart';
+import 'package:shabdamitra/db/word_synset.dart';
 
 class ApplicationContext {
+  static const int maxRecentSearchLength = 10;
   static const int defaultStudentBoardIndex = 0;
   static const int defaultStudentStandardIndex = 0;
   static const int defaultLearnerProficiencyIndex = 0;
@@ -30,6 +35,7 @@ class ApplicationContext {
 
   final GetStorage _storage = GetStorage();
   final DataManager dataManager = DataManager();
+  final List<Word> _recentSearches = <Word>[];
 
   ApplicationContext._internal();
 
@@ -198,6 +204,22 @@ class ApplicationContext {
 
   static String getDefaultLearnerProficiency() {
     return LearnerProficiencies[defaultLearnerProficiencyIndex];
+  }
+
+  void addToRecentSearch(Word word) {
+    if (_recentSearches.contains(word)) {
+      _recentSearches.remove(word);
+      _recentSearches.insert(0, word);
+    } else {
+      if (_recentSearches.length == maxRecentSearchLength) {
+        _recentSearches.removeLast();
+      }
+      _recentSearches.insert(0, word);
+    }
+  }
+
+  List<Word> getRecentSearches() {
+    return List.from(_recentSearches);
   }
 
   bool showSimplifiedData() {

@@ -22,10 +22,84 @@ class _SearchState extends State<Search> {
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              showSearch(context: context, delegate: SearchShabdamitra());
+              showSearch(
+                  context: context,
+                  delegate: SearchShabdamitra(onClose: () {
+                    setState(() {});
+                  }));
             },
             icon: const Icon(Icons.search),
           ),
+        ],
+      ),
+      body: PageView(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (ApplicationContext().getRecentSearches().isNotEmpty) ...[
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text(
+                    'Recent Searches',
+                    style: TextStyle(
+                      fontSize: 30.0,
+                      color: Colors.grey.shade900,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Wrap(
+                    children: ApplicationContext()
+                        .getRecentSearches()
+                        .map(
+                          (word) => FutureBuilder<List<WordSynset>>(
+                            future: word.getWordSynsets(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState !=
+                                  ConnectionState.done) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if (snapshot.hasError) {
+                                return const ErrorRoute();
+                              }
+                              if (snapshot.hasData) {
+                                List<WordSynset> wordSynsets = snapshot.data!;
+                                if (wordSynsets.isNotEmpty) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: ActionChip(
+                                        label: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                            word.word,
+                                            style: const TextStyle(
+                                              fontSize: 20.0,
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Get.to(() => WordDisplay(
+                                              wordSynsets: wordSynsets));
+                                        }),
+                                  );
+                                } else {
+                                  return const SizedBox.shrink();
+                                }
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ],
+            ],
+          )
         ],
       ),
     );
@@ -34,6 +108,9 @@ class _SearchState extends State<Search> {
 
 class SearchShabdamitra extends SearchDelegate<String> {
   List<Word> suggestions = <Word>[];
+  void Function() onClose;
+
+  SearchShabdamitra({required this.onClose}) : super();
 
   @override
   List<Widget>? buildActions(BuildContext context) {
@@ -51,6 +128,7 @@ class SearchShabdamitra extends SearchDelegate<String> {
   Widget? buildLeading(BuildContext context) {
     return IconButton(
       onPressed: () {
+        onClose();
         close(context, query);
       },
       icon: AnimatedIcon(
@@ -88,6 +166,7 @@ class SearchShabdamitra extends SearchDelegate<String> {
             ),
             title: Text(word.word),
             onTap: () {
+              ApplicationContext().addToRecentSearch(word);
               Get.to(() {
                 return FutureBuilder<List<WordSynset>>(
                   future: word.getWordSynsets(),
