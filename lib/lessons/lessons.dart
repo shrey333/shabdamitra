@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shabdamitra/lessons/get_lessons.dart';
-import 'package:shabdamitra/lessons/progress.dart';
-import 'package:shabdamitra/lessons/tests.dart';
 
 class Lessons extends StatefulWidget {
   const Lessons({Key? key}) : super(key: key);
