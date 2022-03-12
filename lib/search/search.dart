@@ -155,11 +155,7 @@ class SearchShabdamitra extends SearchDelegate<String> {
           );
         }
         if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              query == '' ? '' : 'No results found...',
-            ),
-          );
+          return Container();
         }
         if (snapshot.hasData) {
           Word word = snapshot.data!;
