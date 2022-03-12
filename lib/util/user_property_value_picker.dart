@@ -58,7 +58,7 @@ class _UserPropertyValuePickerState extends State<UserPropertyValuePicker> {
                     Text(
                       userPropertyToString(userProperty),
                       style: const TextStyle(
-                        fontSize: 18.0,
+                        fontSize: 15.0,
                       ),
                     ),
                     CupertinoButton(

@@ -70,61 +70,61 @@ class _SettingsState extends State<Settings> {
       changeToType = UserType.student;
     }
     return SafeArea(
-      child: SettingsList(
-        sections: [
-          SettingsSection(
-            title: const Text('User Settings'),
-            tiles: [
-              CustomSettingsTile(
-                child: ListTile(
-                  leading: const CircleAvatar(
-                    child: Icon(Icons.menu),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Settings'),
+          centerTitle: true,
+        ),
+        body: SettingsList(
+          sections: [
+            SettingsSection(
+              title: const Text('User Settings'),
+              tiles: [
+                CustomSettingsTile(
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      child: Icon(Icons.menu),
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    title: Text(getSettingsTitle(userType)),
+                    subtitle: const Text('Customize your preferences'),
+                    onTap: () {
+                      Get.to(
+                        () => UserSettings(
+                          userType: userType,
+                        ),
+                      );
+                    },
                   ),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                  title: Text(getSettingsTitle(userType)),
-                  subtitle: const Text('Customize your preferences'),
-                  onTap: () {
-                    Get.to(
-                      () => UserSettings(
-                        userType: userType,
-                      ),
-                    );
-                  },
                 ),
-              ),
-              CustomSettingsTile(
-                child: ListTile(
-                  leading: const CircleAvatar(child: Icon(Icons.swap_horiz)),
-                  title:
-                      Text('You are currently a ${userTypeToString(userType)}'),
-                  subtitle: Text(
-                      'Tap to switch to ${userTypeToString(changeToType)}'),
-                  onTap: _onTap,
-                ),
-              ),
-            ],
-          ),
-          SettingsSection(
-            title: const Text("General"),
-            tiles: [
-              CustomSettingsTile(
-                child: ListTile(
-                  leading: const CircleAvatar(
-                    child: Icon(Icons.person),
+                CustomSettingsTile(
+                  child: ListTile(
+                    leading: const CircleAvatar(child: Icon(Icons.swap_horiz)),
+                    title: Text(
+                        'You are currently a ${userTypeToString(userType)}'),
+                    subtitle: Text(
+                        'Tap to switch to ${userTypeToString(changeToType)}'),
+                    onTap: _onTap,
                   ),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                  title: const Text("About the developers"),
-                  subtitle: const Text("Contact Us"),
-                  onTap: (){
-                    Get.to(
-                      () => const About()
-                    );
-                  },
-                )
-              )
-            ]
-          )
-        ],
+                ),
+              ],
+            ),
+            SettingsSection(title: const Text("General"), tiles: [
+              CustomSettingsTile(
+                  child: ListTile(
+                leading: const CircleAvatar(
+                  child: Icon(Icons.person),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                title: const Text("About the developers"),
+                subtitle: const Text("Contact Us"),
+                onTap: () {
+                  Get.to(() => const About());
+                },
+              ))
+            ])
+          ],
+        ),
       ),
     );
   }

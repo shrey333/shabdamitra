@@ -14,7 +14,7 @@ class DataManager {
       var wordId = await _dbManager.getWordId(word);
       return Word(wordId: wordId, word: word);
     } catch (ex) {
-      rethrow;
+      return Future.error(ex);
     }
   }
 
@@ -23,7 +23,7 @@ class DataManager {
       String word = await _dbManager.getWordFromWordId(wordId);
       return Word(wordId: wordId, word: word);
     } catch (ex) {
-      rethrow;
+      return Future.error(ex);
     }
   }
 
