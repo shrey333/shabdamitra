@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison, prefer_conditional_assignment
 
+import 'dart:collection';
+
 import 'package:shabdamitra/application_context.dart';
 import 'package:shabdamitra/db/synset.dart';
 import 'package:shabdamitra/db/word.dart';
@@ -7,6 +9,30 @@ import 'package:shabdamitra/db/word.dart';
 import 'enums.dart';
 
 class WordSynset {
+  static const spellingVariationRules = [
+    ['न्', 'ं'],
+    ['न', 'ं'],
+    ['म', 'ं'],
+    ['न्', 'ँ'],
+    ['म्', 'ं'],
+    ['क', 'क़'],
+    ['ख', 'ख़'],
+    ['ग', 'ग़'],
+    ['ज', 'ज़'],
+    ['फ', 'फ़'],
+    ['ं', 'ँ'],
+    ['ः', ''],
+    ['ई', 'यी'],
+    ['ऐ', 'ये'],
+    ['इ', 'ई'],
+    ['ं', 'ण्'],
+    [' ', '-'],
+    ['ल्', 'ल'],
+    ['', '-'],
+    ['र्', 'र'],
+    ['', ' '],
+  ];
+
   Word word;
   Synset synset;
   late final String audioURL;
@@ -44,6 +70,8 @@ class WordSynset {
   bool _gotTransitivity = false;
   Indeclinable _indeclinable = Indeclinable.unspecified;
   bool _gotIndeclinable = false;
+  List<String> _spellingVariations = <String>[];
+  bool _gotSpellingVariations = false;
 
   WordSynset({
     required this.word,
@@ -199,5 +227,43 @@ class WordSynset {
       _gotIndeclinable = true;
     }
     return _indeclinable;
+  }
+
+  Future<List<String>> getSpellingVariations() async {
+    if (!_gotSpellingVariations) {
+      List<WordSynset> synonyms = await getSynonyms();
+      Set<String> spellingVariations = HashSet<String>();
+      for (var synonym in synonyms) {
+        for (var rule in spellingVariationRules) {
+          int posInWord = word.word.indexOf(rule[0]);
+          int posInSynonym = synonym.word.word.indexOf(rule[1]);
+          if (posInWord != -1 && posInSynonym != -1) {
+            if (posInWord == posInSynonym) {
+              String wordNew = word.word.replaceFirst(rule[0], '', posInWord);
+              String synonymNew =
+                  synonym.word.word.replaceFirst(rule[1], '', posInSynonym);
+              if (wordNew == synonymNew) {
+                spellingVariations.add(synonym.word.word);
+              }
+            }
+          }
+          posInWord = word.word.indexOf(rule[1]);
+          posInSynonym = synonym.word.word.indexOf(rule[0]);
+          if (posInWord != -1 && posInSynonym != -1) {
+            if (posInWord == posInSynonym) {
+              String wordNew = word.word.replaceFirst(rule[1], '', posInWord);
+              String synonymNew =
+                  synonym.word.word.replaceFirst(rule[0], '', posInSynonym);
+              if (wordNew == synonymNew) {
+                spellingVariations.add(synonym.word.word);
+              }
+            }
+          }
+        }
+      }
+      _spellingVariations = spellingVariations.toList();
+      _gotSpellingVariations = true;
+    }
+    return _spellingVariations;
   }
 }

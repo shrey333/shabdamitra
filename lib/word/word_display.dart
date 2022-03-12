@@ -189,6 +189,38 @@ class _WordDisplayState extends State<WordDisplay> {
                               return const SizedBox.shrink();
                             },
                           ),
+                        if (ApplicationContext().showSpellingVariation())
+                          FutureBuilder<List<String>>(
+                            future: wordSynsets[index].getSpellingVariations(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState !=
+                                  ConnectionState.done) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if (snapshot.hasError) {
+                                return const ErrorRoute();
+                              }
+                              if (snapshot.hasData) {
+                                List<String> spellingVariations =
+                                    snapshot.data!;
+                                return ListTile(
+                                  title: Text('शब्द-विन्यास विविधता'),
+				  subtitle: Wrap(
+                                    children: spellingVariations
+                                        .map((spellingVariation) {
+                                      return ActionChip(
+                                        label: Text(spellingVariation),
+                                        onPressed: () {},
+                                      );
+                                    }).toList(),
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
                         FutureBuilder<List<WordSynset>>(
                           future: wordSynsets[index].getSynonyms(),
                           builder: (context, snapshot) {

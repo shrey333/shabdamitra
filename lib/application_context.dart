@@ -267,7 +267,11 @@ class ApplicationContext {
   }
 
   bool showSpellingVariation() {
-    return false;
+    if (isUserStudent()) {
+      return getStudentStandard() >= 3;
+    } else {
+      return true;
+    }
   }
 
   bool showAffix() {
