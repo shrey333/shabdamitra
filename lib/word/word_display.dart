@@ -58,7 +58,7 @@ class _WordDisplayState extends State<WordDisplay> {
                     leading: IconButton(
                       icon: const Icon(Icons.close),
                       onPressed: () {
-                        Get.back();
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -130,20 +130,21 @@ class _WordDisplayState extends State<WordDisplay> {
                             return const SizedBox.shrink();
                           },
                         ),
-                        ListTile(
-                          title: const Text('वाक्य में प्रयोग'),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: wordSynsets[index]
-                                .synset
-                                .examples
-                                .map((example) => Text(
-                                      example,
-                                      textAlign: TextAlign.left,
-                                    ))
-                                .toList(),
+                        if (wordSynsets[index].synset.examples.isNotEmpty)
+                          ListTile(
+                            title: const Text('वाक्य में प्रयोग'),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: wordSynsets[index]
+                                  .synset
+                                  .examples
+                                  .map((example) => Text(
+                                        example,
+                                        textAlign: TextAlign.left,
+                                      ))
+                                  .toList(),
+                            ),
                           ),
-                        ),
                         if (ApplicationContext().showPluralForm())
                           FutureBuilder<String>(
                             future: wordSynsets[index].getPluralForm(),
@@ -194,6 +195,38 @@ class _WordDisplayState extends State<WordDisplay> {
                               return const SizedBox.shrink();
                             },
                           ),
+                        if (ApplicationContext().showSpellingVariation())
+                          FutureBuilder<List<String>>(
+                            future: wordSynsets[index].getSpellingVariations(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState !=
+                                  ConnectionState.done) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if (snapshot.hasError) {
+                                return const ErrorRoute();
+                              }
+                              if (snapshot.hasData) {
+                                List<String> spellingVariations =
+                                    snapshot.data!;
+                                return ListTile(
+                                  title: const Text('शब्द-विन्यास विविधता'),
+                                  subtitle: Wrap(
+                                    children: spellingVariations
+                                        .map((spellingVariation) {
+                                      return ActionChip(
+                                        label: Text(spellingVariation),
+                                        onPressed: () {},
+                                      );
+                                    }).toList(),
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
                         FutureBuilder<List<WordSynset>>(
                           future: wordSynsets[index].getSynonyms(),
                           builder: (context, snapshot) {
@@ -216,8 +249,14 @@ class _WordDisplayState extends State<WordDisplay> {
                                       return ActionChip(
                                           label: Text(synonym.word.word),
                                           onPressed: () {
-                                            Get.to(() => WordDisplay(
-                                                wordSynsets: [synonym]));
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        WordDisplay(
+                                                            wordSynsets: [
+                                                              synonym
+                                                            ])));
                                           });
                                     }).toList(),
                                   ),
@@ -251,8 +290,14 @@ class _WordDisplayState extends State<WordDisplay> {
                                       return ActionChip(
                                           label: Text(antonym.word.word),
                                           onPressed: () {
-                                            Get.to(() => WordDisplay(
-                                                wordSynsets: [antonym]));
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        WordDisplay(
+                                                            wordSynsets: [
+                                                              antonym
+                                                            ])));
                                           });
                                     }).toList(),
                                   ),
@@ -435,9 +480,14 @@ class _WordDisplayState extends State<WordDisplay> {
                                         return ActionChip(
                                             label: Text(hypernym.word.word),
                                             onPressed: () {
-                                              Get.to(() => WordDisplay(
-                                                    wordSynsets: [hypernym],
-                                                  ));
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WordDisplay(
+                                                              wordSynsets: [
+                                                                hypernym
+                                                              ])));
                                             });
                                       }).toList(),
                                     ),
@@ -472,9 +522,14 @@ class _WordDisplayState extends State<WordDisplay> {
                                         return ActionChip(
                                             label: Text(hyponym.word.word),
                                             onPressed: () {
-                                              Get.to(() => WordDisplay(
-                                                    wordSynsets: [hyponym],
-                                                  ));
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WordDisplay(
+                                                              wordSynsets: [
+                                                                hyponym
+                                                              ])));
                                             });
                                       }).toList(),
                                     ),
@@ -509,9 +564,14 @@ class _WordDisplayState extends State<WordDisplay> {
                                         return ActionChip(
                                             label: Text(meronym.word.word),
                                             onPressed: () {
-                                              Get.to(() => WordDisplay(
-                                                    wordSynsets: [meronym],
-                                                  ));
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WordDisplay(
+                                                              wordSynsets: [
+                                                                meronym
+                                                              ])));
                                             });
                                       }).toList(),
                                     ),
@@ -546,9 +606,14 @@ class _WordDisplayState extends State<WordDisplay> {
                                         return ActionChip(
                                             label: Text(holonym.word.word),
                                             onPressed: () {
-                                              Get.to(() => WordDisplay(
-                                                    wordSynsets: [holonym],
-                                                  ));
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WordDisplay(
+                                                              wordSynsets: [
+                                                                holonym
+                                                              ])));
                                             });
                                       }).toList(),
                                     ),
@@ -585,11 +650,14 @@ class _WordDisplayState extends State<WordDisplay> {
                                             label:
                                                 Text(_modifiesVerb.word.word),
                                             onPressed: () {
-                                              Get.to(() => WordDisplay(
-                                                    wordSynsets: [
-                                                      _modifiesVerb
-                                                    ],
-                                                  ));
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WordDisplay(
+                                                              wordSynsets: [
+                                                                _modifiesVerb
+                                                              ])));
                                             });
                                       }).toList(),
                                     ),
@@ -626,11 +694,14 @@ class _WordDisplayState extends State<WordDisplay> {
                                             label:
                                                 Text(_modifiesNoun.word.word),
                                             onPressed: () {
-                                              Get.to(() => WordDisplay(
-                                                    wordSynsets: [
-                                                      _modifiesNoun
-                                                    ],
-                                                  ));
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WordDisplay(
+                                                              wordSynsets: [
+                                                                _modifiesNoun
+                                                              ])));
                                             });
                                       }).toList(),
                                     ),

@@ -9,19 +9,18 @@ class ImageDisplay extends StatelessWidget {
   final String url;
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(word),
-        ),
-        body: Center(
-          child: CachedNetworkImage(
-            imageUrl: url,
-            placeholder: (context, url) =>
-                const Center(child: CircularProgressIndicator()),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-            fit: BoxFit.cover,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(word),
+      ),
+      body: Center(
+        child: CachedNetworkImage(
+          imageUrl: url,
+          placeholder: (context, url) => const Center(
+            child: CircularProgressIndicator(),
           ),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+          fit: BoxFit.cover,
         ),
       ),
     );
