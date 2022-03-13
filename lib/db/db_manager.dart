@@ -197,8 +197,8 @@ class DbManager {
             result.first['simplified_gloss'] as String != '') {
           conceptDefinitionCol = 'simplified_gloss';
         }
-        return result.first[conceptDefinitionCol] as String;
       }
+      return result.first[conceptDefinitionCol] as String;
     }
     throw Exception('Synset with given synset id does not exist.');
   }

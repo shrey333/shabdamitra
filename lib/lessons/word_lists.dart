@@ -22,54 +22,50 @@ class _WordListsState extends State<WordLists> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(ApplicationContext().getStudentBoard() +
-              ' ' +
-              ApplicationContext().getStudentStandardString() +
-              ', Lesson ' +
-              lesson.lessonId.toString()),
-        ),
-        body: FutureBuilder<List<WordSynset>>(
-          future: lesson.getLessonWordSynsets(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (snapshot.hasError) {
-              return const ErrorRoute();
-            }
-            if (snapshot.hasData) {
-              List<WordSynset> lessonWordSynsets = snapshot.data!;
-              return ListView.builder(
-                itemCount: lessonWordSynsets.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    child: ListTile(
-                      minVerticalPadding: 10,
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.blue.shade500,
-                        child: Text(lessonWordSynsets[index].word.word[0]),
-                      ),
-                      title: Text(lessonWordSynsets[index].word.word),
-                      onTap: () {
-                        Get.to(() => WordDisplay(
-                              wordSynsets: lessonWordSynsets,
-                              initialWordSynset: index,
-                            ));
-                      },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Lesson ' + lesson.lessonId.toString()),
+      ),
+      body: FutureBuilder<List<WordSynset>>(
+        future: lesson.getLessonWordSynsets(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasError) {
+            return const ErrorRoute();
+          }
+          if (snapshot.hasData) {
+            List<WordSynset> lessonWordSynsets = snapshot.data!;
+            return ListView.builder(
+              itemCount: lessonWordSynsets.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  child: ListTile(
+                    minVerticalPadding: 10,
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.blue.shade500,
+                      child: Text(lessonWordSynsets[index].word.word[0]),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                  );
-                },
-              );
-            }
-            return Container();
-          },
-        ),
+                    title: Text(lessonWordSynsets[index].word.word),
+                    onTap: () {
+                      Get.to(() => WordDisplay(
+                            wordSynsets: lessonWordSynsets,
+                            initialWordSynset: index,
+                          ));
+                    },
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                );
+              },
+            );
+          }
+          return const Center(
+            child: Text('No words found.'),
+          );
+        },
       ),
     );
   }

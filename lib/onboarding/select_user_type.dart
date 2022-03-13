@@ -47,6 +47,7 @@ class _SelectUserTypeState extends State<SelectUserType> {
           child: Padding(
             padding: const EdgeInsets.all(5.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
                   images[index],
@@ -188,8 +189,8 @@ class _SelectUserTypeState extends State<SelectUserType> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: _onNext,
-          label: const Text("NEXT->")
+        onPressed: _onNext,
+        label: const Text("NEXT->"),
       ),
     );
   }

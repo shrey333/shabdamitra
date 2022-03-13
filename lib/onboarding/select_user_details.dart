@@ -41,7 +41,7 @@ class _SelectUserDetailsState extends State<SelectUserDetails> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 30,
-                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),
@@ -51,38 +51,31 @@ class _SelectUserDetailsState extends State<SelectUserDetails> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 5,
-                        ),
-                        child: Center(
-                          child: AutoSizeText(
-                            getPrompt(userType),
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.black45,
-                            ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 5,
+                      ),
+                      child: Center(
+                        child: AutoSizeText(
+                          getPrompt(userType),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black45,
                           ),
                         ),
                       ),
                     ),
-                    Flexible(
-                      flex: userType == UserType.student ? 2 : 1,
-                      fit: FlexFit.tight,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 10,
-                        ),
-                        child: Center(
-                          child: UserPropertyValuePicker(
-                            userType: userType,
-                          ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      child: Center(
+                        child: UserPropertyValuePicker(
+                          userType: userType,
                         ),
                       ),
                     ),
@@ -124,19 +117,17 @@ class _SelectUserDetailsState extends State<SelectUserDetails> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            if (!ApplicationContext().isOnboardingDone()) {
-              if (userType == UserType.student) {
-                ApplicationContext()
-                    .setUserTypeStudentWithDefaultValues();
-              } else {
-                ApplicationContext()
-                    .setUserTypeLearnerWithDefaultValues();
-              }
+        onPressed: () {
+          if (!ApplicationContext().isOnboardingDone()) {
+            if (userType == UserType.student) {
+              ApplicationContext().setUserTypeStudentWithDefaultValues();
+            } else {
+              ApplicationContext().setUserTypeLearnerWithDefaultValues();
             }
-            Get.offAll(() => const HomePage());
-          },
-          label: const Text("FINISH!")
+          }
+          Get.offAll(() => const HomePage());
+        },
+        label: const Text("FINISH!"),
       ),
     );
   }

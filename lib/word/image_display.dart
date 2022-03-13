@@ -3,26 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ImageDisplay extends StatelessWidget {
-  const ImageDisplay({Key? key, required this.index}) : super(key: key);
-  final int index;
+  const ImageDisplay({Key? key, required this.word, required this.url})
+      : super(key: key);
+  final String word;
+  final String url;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(),
-        body: GestureDetector(
-          onTap: () {
-            Get.back();
-          },
-          child: Center(
-            child: CachedNetworkImage(
-              imageUrl:
-                  "https://www.cfilt.iitb.ac.in/hindishabdamitra-frontend/static/images/%E0%A4%86%E0%A4%AE_3462.jpg",
-              placeholder: (context, url) =>
-                  const Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-              fit: BoxFit.cover,
-            ),
+        appBar: AppBar(
+          title: Text(word),
+        ),
+        body: Center(
+          child: CachedNetworkImage(
+            imageUrl: url,
+            placeholder: (context, url) =>
+                const Center(child: CircularProgressIndicator()),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+            fit: BoxFit.cover,
           ),
         ),
       ),

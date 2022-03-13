@@ -22,6 +22,13 @@ class _GetLessonsState extends State<GetLessons> {
 
   @override
   Widget build(BuildContext context) {
+    if (lessons.isEmpty) {
+      return const Center(
+        child: Text(
+          'No lessons found.',
+        ),
+      );
+    }
     return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
