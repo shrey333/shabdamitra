@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Shabdamitra',
+      title: 'मराठी शब्दमित्र',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         backgroundColor: const Color.fromRGBO(254, 254, 255, 255),
