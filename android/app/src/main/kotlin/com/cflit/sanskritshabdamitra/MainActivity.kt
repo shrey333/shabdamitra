@@ -1,4 +1,4 @@
-package com.example.shabdamitra
+package com.cflit.sanskritshabdamitra
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.shabdamitra">
+    package="com.cflit.sanskritshabdamitra">
     <uses-permission android:name="android.permission.INTERNET" android:usesCleartextTraffic="true"/>
    <application
         android:label="संस्कृत शब्दमित्र"
