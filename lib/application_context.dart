@@ -1,11 +1,9 @@
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
-import 'dart:collection';
 
 import 'package:get_storage/get_storage.dart';
 import 'package:shabdamitra/db/data_manager.dart';
 import 'package:shabdamitra/db/word.dart';
-import 'package:shabdamitra/db/word_synset.dart';
 
 class ApplicationContext {
   static const int maxRecentSearchLength = 10;

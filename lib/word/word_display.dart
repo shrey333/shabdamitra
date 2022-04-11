@@ -85,7 +85,7 @@ class _WordDisplayState extends State<WordDisplay> {
                             },
                           ),
                         ListTile(
-                          title: const Text('परिभाषा'),
+                          title: const Text('व्याख्या'),
                           subtitle:
                               Text(wordSynsets[index].synset.conceptDefinition),
                         ),
@@ -108,7 +108,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                   PartOfSpeech.unspecificed) {
                                 return Column(children: [
                                   ListTile(
-                                    title: const Text('शब्दभेद'),
+                                    title: const Text('शब्द फरक'),
                                     subtitle: Text(
                                       partOfSpeechToString(posWithSubtype.part),
                                     ),
@@ -132,7 +132,7 @@ class _WordDisplayState extends State<WordDisplay> {
                         ),
                         if (wordSynsets[index].synset.examples.isNotEmpty)
                           ListTile(
-                            title: const Text('वाक्य में प्रयोग'),
+                            title: const Text('वाक्यात वापरा'),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: wordSynsets[index]
@@ -162,7 +162,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 String pluralForm = snapshot.data!;
                                 if (pluralForm != '') {
                                   return ListTile(
-                                    title: const Text('बहुवचन'),
+                                    title: const Text('अनेकवचन'),
                                     subtitle: Text(pluralForm),
                                   );
                                 } else {
@@ -212,7 +212,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 List<String> spellingVariations =
                                     snapshot.data!;
                                 return ListTile(
-                                  title: const Text('शब्द-विन्यास विविधता'),
+                                  title: const Text('शब्दलेखन विविधता'),
                                   subtitle: Wrap(
                                     children: spellingVariations
                                         .map((spellingVariation) {
@@ -284,7 +284,7 @@ class _WordDisplayState extends State<WordDisplay> {
                               List<WordSynset> antonyms = snapshot.data!;
                               if (antonyms.isNotEmpty) {
                                 return ListTile(
-                                  title: const Text('विलोम शब्द'),
+                                  title: const Text('विरुद्धार्थी शब्द'),
                                   subtitle: Wrap(
                                     children: antonyms.map((antonym) {
                                       return ActionChip(
@@ -328,7 +328,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                   return Column(
                                     children: [
                                       ListTile(
-                                        title: const Text('मूल शब्द'),
+                                        title: const Text('मूळ शब्द'),
                                         subtitle: Text(affix.root),
                                       ),
                                       ListTile(
@@ -362,7 +362,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 Countability countability = snapshot.data!;
                                 if (countability != Countability.unspecified) {
                                   return ListTile(
-                                    title: const Text('गणनीयता'),
+                                    title: const Text('गणनाक्षमता'),
                                     subtitle: Text(
                                       countabilityToString(countability),
                                     ),
@@ -418,7 +418,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 Indeclinable indeclinable = snapshot.data!;
                                 if (indeclinable != Indeclinable.unspecified) {
                                   return ListTile(
-                                    title: const Text('अव्यय'),
+                                    title: const Text('उधळपट्टी'),
                                     subtitle: Text(
                                         indeclinableToString(indeclinable)),
                                   );
@@ -446,7 +446,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 Transitivity transitivity = snapshot.data!;
                                 if (transitivity != Transitivity.unspecified) {
                                   return ListTile(
-                                    title: const Text('संक्रामिता'),
+                                    title: const Text('संक्रमणशीलता'),
                                     subtitle: Text(
                                         transitivityToString(transitivity)),
                                   );
@@ -474,7 +474,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 List<WordSynset> hypernyms = snapshot.data!;
                                 if (hypernyms.isNotEmpty) {
                                   return ListTile(
-                                    title: const Text('एक तरह का'),
+                                    title: const Text('एकप्रकारे'),
                                     subtitle: Wrap(
                                       children: hypernyms.map((hypernym) {
                                         return ActionChip(
@@ -558,7 +558,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 List<WordSynset> meronyms = snapshot.data!;
                                 if (meronyms.isNotEmpty) {
                                   return ListTile(
-                                    title: const Text('का हिस्सा'),
+                                    title: const Text('चा भाग'),
                                     subtitle: Wrap(
                                       children: meronyms.map((meronym) {
                                         return ActionChip(

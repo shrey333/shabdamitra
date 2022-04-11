@@ -2,7 +2,7 @@
     package="com.example.shabdamitra">
     <uses-permission android:name="android.permission.INTERNET" android:usesCleartextTraffic="true"/>
    <application
-        android:label="shabdamitra"
+        android:label="मराठी शब्दमित्र"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
