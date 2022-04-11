@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shabdamitra/ErrorHandlers/error.dart';
-import 'package:shabdamitra/application_context.dart';
 import 'package:shabdamitra/db/lesson.dart';
 import 'package:shabdamitra/db/word_synset.dart';
 import 'package:shabdamitra/word/word_display.dart';

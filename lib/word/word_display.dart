@@ -132,7 +132,7 @@ class _WordDisplayState extends State<WordDisplay> {
                         ),
                         if (wordSynsets[index].synset.examples.isNotEmpty)
                           ListTile(
-                            title: const Text('वाक्य में प्रयोग'),
+                            title: const Text('वाक्ये प्रयोगः उद्धरणं वाः'),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: wordSynsets[index]
@@ -162,7 +162,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 String pluralForm = snapshot.data!;
                                 if (pluralForm != '') {
                                   return ListTile(
-                                    title: const Text('बहुवचन'),
+                                    title: const Text('वचनम्'),
                                     subtitle: Text(pluralForm),
                                   );
                                 } else {
@@ -188,7 +188,7 @@ class _WordDisplayState extends State<WordDisplay> {
                               if (snapshot.hasData) {
                                 Gender gender = snapshot.data!;
                                 return ListTile(
-                                  title: const Text('लिंग'),
+                                  title: const Text('लिङ्गम'),
                                   subtitle: Text(genderToString(gender)),
                                 );
                               }
@@ -284,7 +284,7 @@ class _WordDisplayState extends State<WordDisplay> {
                               List<WordSynset> antonyms = snapshot.data!;
                               if (antonyms.isNotEmpty) {
                                 return ListTile(
-                                  title: const Text('विलोम शब्द'),
+                                  title: const Text('विरुद्धार्थी शब्द'),
                                   subtitle: Wrap(
                                     children: antonyms.map((antonym) {
                                       return ActionChip(
@@ -446,7 +446,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 Transitivity transitivity = snapshot.data!;
                                 if (transitivity != Transitivity.unspecified) {
                                   return ListTile(
-                                    title: const Text('संक्रामिता'),
+                                    title: const Text('कर्मकत्वम'),
                                     subtitle: Text(
                                         transitivityToString(transitivity)),
                                   );
@@ -474,7 +474,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 List<WordSynset> hypernyms = snapshot.data!;
                                 if (hypernyms.isNotEmpty) {
                                   return ListTile(
-                                    title: const Text('एक तरह का'),
+                                    title: const Text('पराजातिः'),
                                     subtitle: Wrap(
                                       children: hypernyms.map((hypernym) {
                                         return ActionChip(
@@ -516,7 +516,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 List<WordSynset> hyponyms = snapshot.data!;
                                 if (hyponyms.isNotEmpty) {
                                   return ListTile(
-                                    title: const Text('प्रकार'),
+                                    title: const Text('अपराजातिः'),
                                     subtitle: Wrap(
                                       children: hyponyms.map((hyponym) {
                                         return ActionChip(
@@ -558,7 +558,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 List<WordSynset> meronyms = snapshot.data!;
                                 if (meronyms.isNotEmpty) {
                                   return ListTile(
-                                    title: const Text('का हिस्सा'),
+                                    title: const Text('अवयवः'),
                                     subtitle: Wrap(
                                       children: meronyms.map((meronym) {
                                         return ActionChip(
@@ -600,7 +600,7 @@ class _WordDisplayState extends State<WordDisplay> {
                                 List<WordSynset> holonyms = snapshot.data!;
                                 if (holonyms.isNotEmpty) {
                                   return ListTile(
-                                    title: const Text('अंगिवाची'),
+                                    title: const Text('अवयवी'),
                                     subtitle: Wrap(
                                       children: holonyms.map((holonym) {
                                         return ActionChip(

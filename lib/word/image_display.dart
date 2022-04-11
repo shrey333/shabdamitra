@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ImageDisplay extends StatelessWidget {
   const ImageDisplay({Key? key, required this.word, required this.url})
