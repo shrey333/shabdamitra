@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.shabdamitra">
+    package="com.cflit.hindishabdamitra">
     <uses-permission android:name="android.permission.INTERNET" android:usesCleartextTraffic="true"/>
    <application
-        android:label="shabdamitra"
+        android:label="हिंदी शब्दमित्र"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

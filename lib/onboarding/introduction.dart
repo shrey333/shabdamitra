@@ -28,7 +28,7 @@ class Introduction extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
                         child: AutoSizeText(
-                          "Shabdamitra",
+                          "हिंदी शब्दमित्र",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 50,
@@ -87,9 +87,7 @@ class Introduction extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: _onNext,
-          label: const Text("NEXT->")
-      ),
+          onPressed: _onNext, label: const Text("NEXT->")),
     );
   }
 }
